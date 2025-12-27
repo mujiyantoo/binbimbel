@@ -20,20 +20,21 @@ const AdminPage = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-      
+      // In Netlify, the API will be available at the same domain under /api
+      const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || '';
+
       // Fetch registrations
       const regResponse = await fetch(`${BACKEND_URL}/api/registrations`);
       const regData = await regResponse.json();
-      
+
       // Fetch stats
       const statsResponse = await fetch(`${BACKEND_URL}/api/registrations/stats/summary`);
       const statsData = await statsResponse.json();
-      
+
       if (regData.success) {
         setRegistrations(regData.data);
       }
-      
+
       if (statsData.success) {
         setStats(statsData.data);
       }
@@ -46,10 +47,10 @@ const AdminPage = () => {
 
   const fetchRegistrationDetail = async (id) => {
     try {
-      const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+      const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || '';
       const response = await fetch(`${BACKEND_URL}/api/registrations/${id}`);
       const data = await response.json();
-      
+
       if (data.success) {
         setSelectedRegistration(data.data);
         setIsDetailOpen(true);
@@ -64,7 +65,7 @@ const AdminPage = () => {
   }, []);
 
   const programBadgeColor = (program) => {
-    switch(program) {
+    switch (program) {
       case 'reguler': return 'bg-blue-100 text-blue-700';
       case 'intensif': return 'bg-red-100 text-red-700';
       case 'privat': return 'bg-green-100 text-green-700';
@@ -239,7 +240,7 @@ const AdminPage = () => {
           <DialogHeader>
             <DialogTitle>Detail Pendaftaran</DialogTitle>
           </DialogHeader>
-          
+
           {selectedRegistration && (
             <div className="space-y-6">
               {/* Data Siswa */}

@@ -25,7 +25,7 @@ const PendaftaranPage = () => {
     alamat: '',
     telepon: '',
     email: '',
-    
+
     // Data Orang Tua
     nama_ayah: '',
     pekerjaan_ayah: '',
@@ -34,13 +34,13 @@ const PendaftaranPage = () => {
     pekerjaan_ibu: '',
     telepon_ibu: '',
     alamat_ortu: '',
-    
+
     // Program
     program: '',
     mata_pelajaran: [],
     hari: '',
     waktu: '',
-    
+
     // Info Tambahan
     referensi: '',
     persetujuan: false,
@@ -69,7 +69,7 @@ const PendaftaranPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Validasi
     if (!formData.persetujuan) {
       toast({
@@ -93,7 +93,7 @@ const PendaftaranPage = () => {
     // Submit ke backend API
     setIsSubmitting(true);
     try {
-      const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+      const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || '';
       const response = await fetch(`${BACKEND_URL}/api/registrations`, {
         method: 'POST',
         headers: {
