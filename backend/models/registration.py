@@ -2,6 +2,51 @@ from pydantic import BaseModel, Field, EmailStr, field_validator
 from typing import List, Optional
 from datetime import datetime
 import uuid
+from sqlalchemy import Column, String, DateTime, JSON, Boolean, Text
+from sqlalchemy.orm import Mapped, mapped_column
+from ..database import Base
+
+
+class RegistrationModel(Base):
+    __tablename__ = "registrations"
+
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    
+    # Data Calon Siswa
+    nama_lengkap = Column(String(100), nullable=False)
+    nama_panggilan = Column(String(50))
+    jenis_kelamin = Column(String(1))
+    tempat_lahir = Column(String(100))
+    tanggal_lahir = Column(String(50))
+    asal_sekolah = Column(String(150))
+    kelas = Column(String(50))
+    alamat = Column(Text)
+    telepon = Column(String(20))
+    email = Column(String(100))
+    
+    # Data Orang Tua/Wali
+    nama_ayah = Column(String(100))
+    pekerjaan_ayah = Column(String(100))
+    telepon_ayah = Column(String(20))
+    nama_ibu = Column(String(100))
+    pekerjaan_ibu = Column(String(100))
+    telepon_ibu = Column(String(20))
+    alamat_ortu = Column(Text)
+    
+    # Pilihan Program Bimbel
+    program = Column(String(100))
+    mata_pelajaran = Column(JSON)  # Menggunakan JSON untuk List[str]
+    hari = Column(String(50))
+    waktu = Column(String(50))
+    
+    # Informasi Tambahan
+    referensi = Column(String(100))
+    persetujuan = Column(Boolean, default=False)
+    tanggal_daftar = Column(String(50))
+    
+    # Metadata
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
 class RegistrationCreate(BaseModel):
@@ -55,7 +100,7 @@ class RegistrationCreate(BaseModel):
 
 class Registration(BaseModel):
     """Model lengkap untuk data yang tersimpan di database"""
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    id: str
     
     # Data Calon Siswa
     nama_lengkap: str
@@ -90,8 +135,11 @@ class Registration(BaseModel):
     tanggal_daftar: str
     
     # Metadata
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime
+    updated_at: datetime
+    
+    class Config:
+        from_attributes = True
 
 
 class RegistrationResponse(BaseModel):

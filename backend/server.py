@@ -1,15 +1,18 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, Depends
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
-from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import logging
 from pathlib import Path
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field
 from typing import List
 import uuid
 from datetime import datetime, timezone
 from contextlib import asynccontextmanager
+from database import init_db, get_db
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select, Column, String, DateTime
+from database import Base
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -21,28 +24,31 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# --- Konfigurasi Database ---
-# Pastikan variable MONGO_URL dan DB_NAME ada di Railway Variables
-mongo_url = os.environ.get('MONGO_URL')
-db_name = os.environ.get('DB_NAME', 'bimbel_db')
+# --- Models untuk Status Check ---
+class StatusCheckModel(Base):
+    __tablename__ = "status_checks"
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    client_name = Column(String(100))
+    timestamp = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
-if not mongo_url:
-    logger.error("MONGO_URL tidak ditemukan di environment variables!")
-    # Fallback agar tidak langsung crash saat build, tapi akan error saat connect
-    client = None
-    db = None
-else:
-    client = AsyncIOMotorClient(mongo_url)
-    db = client[db_name]
+class StatusCheck(BaseModel):
+    id: str
+    client_name: str
+    timestamp: datetime
+    class Config:
+        from_attributes = True
+
+class StatusCheckCreate(BaseModel):
+    client_name: str
 
 # --- Lifespan Manager ---
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info("Aplikasi dimulai...")
+    logger.info("Memulai inisialisasi database...")
+    await init_db()
+    logger.info("Database PostgreSQL siap.")
     yield
-    if client:
-        client.close()
-    logger.info("Koneksi MongoDB ditutup.")
+    logger.info("Aplikasti dihentikan.")
 
 # --- Inisialisasi App ---
 app = FastAPI(
@@ -53,49 +59,32 @@ app = FastAPI(
 
 api_router = APIRouter(prefix="/api")
 
-# --- Models ---
-class StatusCheck(BaseModel):
-    model_config = ConfigDict(extra="ignore") 
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    client_name: str
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-
-class StatusCheckCreate(BaseModel):
-    client_name: str
-
 # --- Routes ---
 @api_router.get("/")
 async def root():
-    return {"message": "BIN Bimbel API - Ready"}
+    return {"message": "BIN Bimbel API (Postgres) - Ready"}
 
 @api_router.post("/status", response_model=StatusCheck)
-async def create_status_check(status_data: StatusCheckCreate): 
-    status_dict = status_data.model_dump()
-    status_obj = StatusCheck(**status_dict)
-    doc = status_obj.model_dump()
-    
-    if db is not None:
-        await db.status_checks.insert_one(doc)
+async def create_status_check(status_data: StatusCheckCreate, db: AsyncSession = Depends(get_db)): 
+    status_obj = StatusCheckModel(client_name=status_data.client_name)
+    db.add(status_obj)
+    await db.commit()
+    await db.refresh(status_obj)
     return status_obj
 
 @api_router.get("/status", response_model=List[StatusCheck])
-async def get_status_checks(skip: int = 0, limit: int = 100):
-    if db is None:
-        return []
-    
-    status_checks = await db.status_checks.find(
-        {}, 
-        {"_id": 0}
-    ).skip(skip).limit(limit).sort("timestamp", -1).to_list(limit)
-    
-    return status_checks
+async def get_status_checks(skip: int = 0, limit: int = 100, db: AsyncSession = Depends(get_db)):
+    stmt = select(StatusCheckModel).offset(skip).limit(limit).order_by(StatusCheckModel.timestamp.desc())
+    result = await db.execute(stmt)
+    return result.scalars().all()
 
-# --- Import & Include Router Lain (Opsional) ---
+# --- Import & Include Router Lain ---
 try:
     from routes.registrations import router as registrations_router
     api_router.include_router(registrations_router)
-except ImportError:
-    pass
+    logger.info("Router registrasi dimuat.")
+except ImportError as e:
+    logger.error(f"Gagal memuat router registrasi: {e}")
 
 app.include_router(api_router)
 
@@ -103,7 +92,7 @@ app.include_router(api_router)
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
-    allow_origins=["*"], # Buka untuk semua origin sementara waktu agar tidak error CORS
+    allow_origins=["*"], 
     allow_methods=["*"],
     allow_headers=["*"],
 )

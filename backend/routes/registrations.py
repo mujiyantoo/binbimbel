@@ -1,14 +1,15 @@
-from fastapi import APIRouter, HTTPException, status
-from motor.motor_asyncio import AsyncIOMotorClient
+from fastapi import APIRouter, HTTPException, status, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select, func, desc
 from models.registration import (
     RegistrationCreate, 
-    Registration, 
+    RegistrationModel, 
     RegistrationResponse,
     RegistrationListResponse
 )
+from database import get_db
 from typing import List
 import logging
-from bson import ObjectId
 from datetime import datetime
 
 logger = logging.getLogger(__name__)
@@ -16,36 +17,30 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/registrations", tags=["registrations"])
 
 
-def get_db():
-    """Helper function to get database connection"""
-    from server import db
-    return db
-
-
 @router.post("", response_model=RegistrationResponse, status_code=status.HTTP_201_CREATED)
-async def create_registration(registration: RegistrationCreate):
+async def create_registration(registration: RegistrationCreate, db: AsyncSession = Depends(get_db)):
     """
     Endpoint untuk submit formulir pendaftaran siswa baru
     """
     try:
-        # Konversi ke model Registration dengan metadata
-        registration_dict = registration.dict()
-        registration_obj = Registration(**registration_dict)
+        # Konversi ke model SQLAlchemy
+        new_reg = RegistrationModel(**registration.dict())
         
-        # Simpan ke MongoDB
-        db = get_db()
-        result = await db.registrations.insert_one(registration_obj.dict())
+        # Simpan ke Database
+        db.add(new_reg)
+        await db.commit()
+        await db.refresh(new_reg)
         
-        logger.info(f"New registration created: {result.inserted_id}")
+        logger.info(f"New registration created: {new_reg.id}")
         
         return RegistrationResponse(
             success=True,
             message="Pendaftaran berhasil! Tim kami akan segera menghubungi Anda.",
             data={
-                "registration_id": str(result.inserted_id),
-                "nama_lengkap": registration.nama_lengkap,
-                "program": registration.program,
-                "created_at": registration_obj.created_at.isoformat()
+                "registration_id": new_reg.id,
+                "nama_lengkap": new_reg.nama_lengkap,
+                "program": new_reg.program,
+                "created_at": new_reg.created_at.isoformat()
             }
         )
         
@@ -57,6 +52,7 @@ async def create_registration(registration: RegistrationCreate):
         )
     except Exception as e:
         logger.error(f"Error creating registration: {str(e)}")
+        await db.rollback()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Terjadi kesalahan saat memproses pendaftaran. Silakan coba lagi."
@@ -67,48 +63,33 @@ async def create_registration(registration: RegistrationCreate):
 async def get_all_registrations(
     skip: int = 0,
     limit: int = 100,
-    program: str = None
+    program: str = None,
+    db: AsyncSession = Depends(get_db)
 ):
     """
     Endpoint untuk mengambil semua data pendaftaran
-    Query params:
-    - skip: untuk pagination
-    - limit: maksimal data yang diambil
-    - program: filter berdasarkan program (reguler/intensif/privat)
     """
     try:
-        db = get_db()
-        
         # Build query
-        query = {}
+        stmt = select(RegistrationModel)
         if program:
-            query["program"] = program
+            stmt = stmt.where(RegistrationModel.program == program)
         
-        # Get data dengan pagination (with projection for optimization)
-        cursor = db.registrations.find(
-            query,
-            {
-                "_id": 1,
-                "nama_lengkap": 1,
-                "program": 1,
-                "telepon": 1,
-                "kelas": 1,
-                "created_at": 1
-            }
-        ).skip(skip).limit(limit).sort("created_at", -1)
-        registrations = await cursor.to_list(length=limit)
+        # Sorting, pagination
+        stmt = stmt.order_by(desc(RegistrationModel.created_at)).offset(skip).limit(limit)
         
-        # Convert ObjectId to string dan format data
+        result = await db.execute(stmt)
+        registrations = result.scalars().all()
+        
         formatted_data = []
         for reg in registrations:
-            reg["_id"] = str(reg["_id"])
             formatted_data.append({
-                "registration_id": reg["_id"],
-                "nama_lengkap": reg["nama_lengkap"],
-                "program": reg["program"],
-                "telepon": reg["telepon"],
-                "kelas": reg["kelas"],
-                "created_at": reg.get("created_at", "").isoformat() if isinstance(reg.get("created_at"), datetime) else reg.get("created_at", "")
+                "registration_id": reg.id,
+                "nama_lengkap": reg.nama_lengkap,
+                "program": reg.program,
+                "telepon": reg.telepon,
+                "kelas": reg.kelas,
+                "created_at": reg.created_at.isoformat() if reg.created_at else ""
             })
         
         return RegistrationListResponse(
@@ -126,23 +107,14 @@ async def get_all_registrations(
 
 
 @router.get("/{registration_id}", response_model=RegistrationResponse)
-async def get_registration_by_id(registration_id: str):
+async def get_registration_by_id(registration_id: str, db: AsyncSession = Depends(get_db)):
     """
     Endpoint untuk mengambil detail satu pendaftaran berdasarkan ID
     """
     try:
-        db = get_db()
-        
-        # Cari berdasarkan ObjectId
-        try:
-            object_id = ObjectId(registration_id)
-        except:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Invalid registration ID format"
-            )
-        
-        registration = await db.registrations.find_one({"_id": object_id})
+        stmt = select(RegistrationModel).where(RegistrationModel.id == registration_id)
+        result = await db.execute(stmt)
+        registration = result.scalar_one_or_none()
         
         if not registration:
             raise HTTPException(
@@ -150,19 +122,41 @@ async def get_registration_by_id(registration_id: str):
                 detail="Registration not found"
             )
         
-        # Convert ObjectId to string
-        registration["_id"] = str(registration["_id"])
-        
-        # Format datetime
-        if isinstance(registration.get("created_at"), datetime):
-            registration["created_at"] = registration["created_at"].isoformat()
-        if isinstance(registration.get("updated_at"), datetime):
-            registration["updated_at"] = registration["updated_at"].isoformat()
+        # Convert to dict for response
+        reg_dict = {
+            "id": registration.id,
+            "nama_lengkap": registration.nama_lengkap,
+            "nama_panggilan": registration.nama_panggilan,
+            "jenis_kelamin": registration.jenis_kelamin,
+            "tempat_lahir": registration.tempat_lahir,
+            "tanggal_lahir": registration.tanggal_lahir,
+            "asal_sekolah": registration.asal_sekolah,
+            "kelas": registration.kelas,
+            "alamat": registration.alamat,
+            "telepon": registration.telepon,
+            "email": registration.email,
+            "nama_ayah": registration.nama_ayah,
+            "pekerjaan_ayah": registration.pekerjaan_ayah,
+            "telepon_ayah": registration.telepon_ayah,
+            "nama_ibu": registration.nama_ibu,
+            "pekerjaan_ibu": registration.pekerjaan_ibu,
+            "telepon_ibu": registration.telepon_ibu,
+            "alamat_ortu": registration.alamat_ortu,
+            "program": registration.program,
+            "mata_pelajaran": registration.mata_pelajaran,
+            "hari": registration.hari,
+            "waktu": registration.waktu,
+            "referensi": registration.referensi,
+            "persetujuan": registration.persetujuan,
+            "tanggal_daftar": registration.tanggal_daftar,
+            "created_at": registration.created_at.isoformat() if registration.created_at else None,
+            "updated_at": registration.updated_at.isoformat() if registration.updated_at else None
+        }
         
         return RegistrationResponse(
             success=True,
             message="Data ditemukan",
-            data=registration
+            data=reg_dict
         )
         
     except HTTPException:
@@ -176,46 +170,33 @@ async def get_registration_by_id(registration_id: str):
 
 
 @router.get("/stats/summary")
-async def get_registration_stats():
+async def get_registration_stats(db: AsyncSession = Depends(get_db)):
     """
     Endpoint untuk mendapatkan statistik pendaftaran
     """
     try:
-        db = get_db()
-        
         # Total registrations
-        total = await db.registrations.count_documents({})
+        total_stmt = select(func.count(RegistrationModel.id))
+        total_result = await db.execute(total_stmt)
+        total = total_result.scalar()
         
         # Count by program
-        pipeline = [
-            {
-                "$group": {
-                    "_id": "$program",
-                    "count": {"$sum": 1}
-                }
-            }
-        ]
-        program_stats = await db.registrations.aggregate(pipeline).to_list(length=10)
+        program_stmt = select(RegistrationModel.program, func.count(RegistrationModel.id)).group_by(RegistrationModel.program)
+        program_result = await db.execute(program_stmt)
+        program_stats = {row[0]: row[1] for row in program_result.all()}
         
-        # Count by kelas level (SD, SMP, SMA)
-        pipeline_kelas = [
-            {
-                "$group": {
-                    "_id": {
-                        "$substr": ["$kelas", 0, 2]
-                    },
-                    "count": {"$sum": 1}
-                }
-            }
-        ]
-        kelas_stats = await db.registrations.aggregate(pipeline_kelas).to_list(length=10)
+        # Count by level (Substr logic)
+        # Note: SUBSTR works in most Postgres versions
+        level_stmt = select(func.substr(RegistrationModel.kelas, 1, 2), func.count(RegistrationModel.id)).group_by(func.substr(RegistrationModel.kelas, 1, 2))
+        level_result = await db.execute(level_stmt)
+        level_stats = {row[0]: row[1] for row in level_result.all()}
         
         return {
             "success": True,
             "data": {
                 "total_registrations": total,
-                "by_program": {item["_id"]: item["count"] for item in program_stats},
-                "by_level": {item["_id"]: item["count"] for item in kelas_stats}
+                "by_program": program_stats,
+                "by_level": level_stats
             }
         }
         
