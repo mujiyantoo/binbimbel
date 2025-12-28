@@ -90,65 +90,54 @@ const PendaftaranPage = () => {
       return;
     }
 
-    // Submit ke backend API
     setIsSubmitting(true);
     try {
-      const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || '';
-      const response = await fetch(`${BACKEND_URL}/api/registrations`, {
+      // --- EMERGENCY MODE: HARDCODED MAKE.COM URL ---
+      // Ini memastikan form tetap jalan meskipun backend mati atau file .env belum terbaca
+      const MAKE_WEBHOOK_URL = "https://hook.eu1.make.com/a7qtbmekxxv4h6je6tid79uxa62ub0m8";
+
+      console.log("Mengirim data ke Make.com...", MAKE_WEBHOOK_URL);
+
+      // 1. Kirim ke Make.com (Prioritas Utama)
+      const makeResponse = await fetch(MAKE_WEBHOOK_URL, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
 
-      const data = await response.json();
+      // 2. Coba kirim ke Backend (Opsional/Background)
+      // Kita tidak menunggu ini untuk menampilkan pesan sukses ke user
+      const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || '';
+      fetch(`${BACKEND_URL}/api/registrations`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      }).catch(err => console.log("Backend offline (abaikan):", err));
 
-      if (response.ok && data.success) {
+      // 3. Cek hasil Make.com
+      if (makeResponse.ok) {
         toast({
           title: "Pendaftaran Berhasil!",
-          description: data.message,
+          description: "Data Anda telah kami terima dan akan segera diproses.",
         });
 
-        // Reset form
+        // Reset Form
         setFormData({
-          nama_lengkap: '',
-          nama_panggilan: '',
-          jenis_kelamin: '',
-          tempat_lahir: '',
-          tanggal_lahir: '',
-          asal_sekolah: '',
-          kelas: '',
-          alamat: '',
-          telepon: '',
-          email: '',
-          nama_ayah: '',
-          pekerjaan_ayah: '',
-          telepon_ayah: '',
-          nama_ibu: '',
-          pekerjaan_ibu: '',
-          telepon_ibu: '',
-          alamat_ortu: '',
-          program: '',
-          mata_pelajaran: [],
-          hari: '',
-          waktu: '',
-          referensi: '',
-          persetujuan: false,
-          tanggal_daftar: new Date().toISOString().split('T')[0]
+          nama_lengkap: '', nama_panggilan: '', jenis_kelamin: '', tempat_lahir: '', tanggal_lahir: '',
+          asal_sekolah: '', kelas: '', alamat: '', telepon: '', email: '',
+          nama_ayah: '', pekerjaan_ayah: '', telepon_ayah: '', nama_ibu: '', pekerjaan_ibu: '', telepon_ibu: '', alamat_ortu: '',
+          program: '', mata_pelajaran: [], hari: '', waktu: '', referensi: '',
+          persetujuan: false, tanggal_daftar: new Date().toISOString().split('T')[0]
         });
       } else {
-        toast({
-          title: "Pendaftaran Gagal",
-          description: data.message || "Terjadi kesalahan saat memproses pendaftaran",
-          variant: "destructive"
-        });
+        throw new Error("Gagal mengirim data ke sistem pendaftaran.");
       }
+
     } catch (error) {
       console.error('Error submitting form:', error);
       toast({
         title: "Pendaftaran Gagal",
-        description: "Tidak dapat terhubung ke server. Silakan coba lagi.",
+        description: "Mohon cek koneksi internet Anda atau hubungi admin.",
         variant: "destructive"
       });
     } finally {
@@ -572,17 +561,7 @@ const PendaftaranPage = () => {
                       disabled={isSubmitting}
                       className="w-full bg-[#5A9C9B] hover:bg-[#4a8584] text-white font-bold py-6 text-lg rounded-full shadow-lg hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {isSubmitting ? (
-                        <>
-                          <span className="animate-spin mr-2">⏳</span>
-                          <span>Mengirim...</span>
-                        </>
-                      ) : (
-                        <>
-                          <CheckCircle className="mr-2 h-5 w-5" />
-                          <span>Kirim Pendaftaran</span>
-                        </>
-                      )}
+                      {isSubmitting ? "Mengirim..." : "Kirim Pendaftaran"}
                     </Button>
                   </div>
                 </div>

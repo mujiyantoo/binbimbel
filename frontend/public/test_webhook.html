@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Webhook Make.com</title>
+</head>
+<body>
+    <h1>Test Koneksi Make.com</h1>
+    <p>Klik tombol di bawah untuk mengirim data tes ke Make.com</p>
+    <button id="btn" onclick="testSend()" style="padding: 20px; font-size: 20px;">Kirim Tes Data</button>
+    <p id="status">Status: Menunggu...</p>
+
+    <script>
+        async function testSend() {
+            const status = document.getElementById('status');
+            const btn = document.getElementById('btn');
+            
+            status.innerText = "Status: Mengirim...";
+            status.style.color = "blue";
+            btn.disabled = true;
+
+            const webhookUrl = "https://hook.eu1.make.com/a7qtbmekxxv4h6je6tid79uxa62ub0m8";
+            
+            const data = {
+                nama_lengkap: "Tes Data Manual",
+                email: "binbimbel@gmail.com",
+                test_message: "Ini adalah data tes dari file HTML sederhana"
+            };
+
+            try {
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    status.innerText = "Status: SUKSES! Server Make.com menerima data (Kode 200).";
+                    status.style.color = "green";
+                    alert("Sukses! Cek Email/Sheet Anda sekarang.");
+                } else {
+                    status.innerText = "Status: GAGAL. Server menolak (Kode " + response.status + ")";
+                    status.style.color = "red";
+                }
+            } catch (error) {
+                status.innerText = "Status: ERROR JARINGAN. " + error.message;
+                status.style.color = "red";
+            } finally {
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
