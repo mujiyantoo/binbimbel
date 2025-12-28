@@ -9,9 +9,13 @@ from pathlib import Path
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
-# Neon uses postgresql:// but asyncpg needs postgresql+asyncpg://
-# Check for standard DATABASE_URL or Netlify's auto-generated NETLIFY_DATABASE_URL
-DATABASE_URL = os.environ.get("DATABASE_URL") or os.environ.get("NETLIFY_DATABASE_URL")
+# Supabase/Neon uses postgresql:// but asyncpg needs postgresql+asyncpg://
+# Check for Supabase, standard DATABASE_URL, or Netlify's auto-generated NETLIFY_DATABASE_URL
+DATABASE_URL = (
+    os.environ.get("SUPABASE_DB_URL") or 
+    os.environ.get("DATABASE_URL") or 
+    os.environ.get("NETLIFY_DATABASE_URL")
+)
 if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+asyncpg://", 1)
 elif DATABASE_URL and DATABASE_URL.startswith("postgresql://"):

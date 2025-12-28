@@ -279,3 +279,131 @@ async def export_registrations_csv(db: AsyncSession = Depends(get_db)):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Gagal mengekspor data: {str(e)}"
         )
+
+
+@router.get("/export/excel")
+async def export_registrations_excel(db: AsyncSession = Depends(get_db)):
+    """
+    Endpoint untuk mengekspor semua data pendaftaran ke file Excel (.xlsx)
+    dengan formatting yang lebih baik dibanding CSV
+    """
+    try:
+        from openpyxl import Workbook
+        from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+        from openpyxl.utils import get_column_letter
+        
+        # Ambil semua data
+        stmt = select(RegistrationModel).order_by(desc(RegistrationModel.created_at))
+        result = await db.execute(stmt)
+        registrations = result.scalars().all()
+        
+        # Buat workbook baru
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Data Pendaftaran"
+        
+        # Header styling
+        header_fill = PatternFill(start_color="4472C4", end_color="4472C4", fill_type="solid")
+        header_font = Font(bold=True, color="FFFFFF", size=11)
+        header_alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+        border = Border(
+            left=Side(style='thin'),
+            right=Side(style='thin'),
+            top=Side(style='thin'),
+            bottom=Side(style='thin')
+        )
+        
+        # Header columns
+        headers = [
+            "No", "ID Pendaftaran", "Nama Lengkap", "Nama Panggilan", "Jenis Kelamin",
+            "Tempat Lahir", "Tanggal Lahir", "Asal Sekolah", "Kelas",
+            "Alamat Siswa", "Telepon Siswa", "Email Siswa",
+            "Nama Ayah", "Pekerjaan Ayah", "Telepon Ayah",
+            "Nama Ibu", "Pekerjaan Ibu", "Telepon Ibu", "Alamat Orang Tua",
+            "Program", "Mata Pelajaran", "Hari", "Waktu",
+            "Referensi", "Tanggal Daftar", "Dibuat Pada"
+        ]
+        
+        # Tulis header
+        for col_num, header in enumerate(headers, 1):
+            cell = ws.cell(row=1, column=col_num)
+            cell.value = header
+            cell.fill = header_fill
+            cell.font = header_font
+            cell.alignment = header_alignment
+            cell.border = border
+        
+        # Tulis data
+        for row_num, reg in enumerate(registrations, 2):
+            data_row = [
+                row_num - 1,  # Nomor urut
+                reg.id,
+                reg.nama_lengkap,
+                reg.nama_panggilan or "",
+                "Laki-laki" if reg.jenis_kelamin == 'L' else "Perempuan",
+                reg.tempat_lahir,
+                reg.tanggal_lahir,
+                reg.asal_sekolah,
+                reg.kelas.upper() if reg.kelas else "",
+                reg.alamat,
+                reg.telepon,
+                reg.email or "",
+                reg.nama_ayah,
+                reg.pekerjaan_ayah or "",
+                reg.telepon_ayah,
+                reg.nama_ibu,
+                reg.pekerjaan_ibu or "",
+                reg.telepon_ibu,
+                reg.alamat_ortu or "",
+                reg.program,
+                ", ".join(reg.mata_pelajaran) if reg.mata_pelajaran else "",
+                reg.hari,
+                reg.waktu,
+                reg.referensi,
+                reg.tanggal_daftar,
+                reg.created_at.strftime("%Y-%m-%d %H:%M") if reg.created_at else ""
+            ]
+            
+            for col_num, value in enumerate(data_row, 1):
+                cell = ws.cell(row=row_num, column=col_num)
+                cell.value = value
+                cell.border = border
+                cell.alignment = Alignment(vertical="top", wrap_text=True)
+        
+        # Auto-adjust column widths
+        for col_num in range(1, len(headers) + 1):
+            column_letter = get_column_letter(col_num)
+            max_length = 0
+            for cell in ws[column_letter]:
+                try:
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(str(cell.value))
+                except:
+                    pass
+            adjusted_width = min(max_length + 2, 50)  # Max 50 characters
+            ws.column_dimensions[column_letter].width = adjusted_width
+        
+        # Freeze header row
+        ws.freeze_panes = "A2"
+        
+        # Simpan ke BytesIO
+        output = io.BytesIO()
+        wb.save(output)
+        output.seek(0)
+        
+        # Return sebagai file download
+        filename = f"Data_Pendaftaran_BIN_Bimbel_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx"
+        
+        return StreamingResponse(
+            output,
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={"Content-Disposition": f"attachment; filename={filename}"}
+        )
+        
+    except Exception as e:
+        logger.error(f"Error exporting to Excel: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Gagal mengekspor data ke Excel: {str(e)}"
+        )
+

@@ -110,8 +110,8 @@ const AdminPage = () => {
     }
   };
 
-  const handleExportExcel = async () => {
-    // Client-side export as fallback
+  const handleExportCSV = async () => {
+    // Client-side CSV export as fallback
     if (registrations.length === 0) {
       alert('Tidak ada data untuk di-export');
       return;
@@ -144,6 +144,41 @@ const AdminPage = () => {
     } catch (error) {
       console.error('Error exporting:', error);
       alert('Gagal export data');
+    }
+  };
+
+  const handleExportExcel = async () => {
+    if (registrations.length === 0) {
+      alert('Tidak ada data untuk di-export');
+      return;
+    }
+
+    setIsExporting(true);
+    try {
+      const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || '';
+      const response = await fetch(`${BACKEND_URL}/api/registrations/export/excel`);
+
+      if (!response.ok) {
+        throw new Error('Gagal mengunduh file Excel');
+      }
+
+      // Get the blob from response
+      const blob = await response.blob();
+
+      // Create download link
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Data_Pendaftaran_BIN_Bimbel_${new Date().toISOString().split('T')[0]}.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Error exporting to Excel:', error);
+      alert('Gagal export ke Excel. Silakan coba lagi.');
+    } finally {
+      setIsExporting(false);
     }
   };
 
@@ -183,13 +218,21 @@ const AdminPage = () => {
             </div>
             <div className="flex space-x-3">
               <Button
-                onClick={handleExportExcel}
+                onClick={handleExportCSV}
                 disabled={isExporting || registrations.length === 0}
                 variant="outline"
-                className="border-[#F89E3C] text-[#F89E3C] hover:bg-[#F89E3C] hover:text-white"
+                className="border-[#5A9C9B] text-[#5A9C9B] hover:bg-[#5A9C9B] hover:text-white"
               >
                 <Download className="h-4 w-4 mr-2" />
-                {isExporting ? 'Exporting...' : `Export ke CSV (${registrations.length} data)`}
+                Export CSV
+              </Button>
+              <Button
+                onClick={handleExportExcel}
+                disabled={isExporting || registrations.length === 0}
+                className="bg-[#F89E3C] hover:bg-[#e88d2b] text-white"
+              >
+                <Download className="h-4 w-4 mr-2" />
+                {isExporting ? 'Exporting...' : 'Export Excel'}
               </Button>
               <Button
                 onClick={fetchData}
