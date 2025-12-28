@@ -206,14 +206,14 @@ async def get_registration_stats(db: AsyncSession = Depends(get_db)):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Terjadi kesalahan saat mengambil statistik"
         )
-import pandas as pd
+import csv
 import io
 from fastapi.responses import StreamingResponse
 
-@router.get("/export/excel")
-async def export_registrations_excel(db: AsyncSession = Depends(get_db)):
+@router.get("/export/csv")
+async def export_registrations_csv(db: AsyncSession = Depends(get_db)):
     """
-    Endpoint untuk mengekspor semua data pendaftaran ke file Excel
+    Endpoint untuk mengekspor semua data pendaftaran ke file CSV
     """
     try:
         # Ambil semua data
@@ -221,64 +221,60 @@ async def export_registrations_excel(db: AsyncSession = Depends(get_db)):
         result = await db.execute(stmt)
         registrations = result.scalars().all()
         
-        # Siapkan data untuk DataFrame
-        data_list = []
+        # Siapkan CSV output
+        output = io.StringIO()
+        writer = csv.writer(output)
+        
+        # Header
+        writer.writerow([
+            "ID", "Nama Lengkap", "Nama Panggilan", "Jenis Kelamin",
+            "Tempat Lahir", "Tanggal Lahir", "Asal Sekolah", "Kelas",
+            "Alamat", "Telepon", "Email", "Nama Ayah", "Telepon Ayah",
+            "Nama Ibu", "Telepon Ibu", "Program", "Mata Pelajaran",
+            "Hari", "Waktu", "Referensi", "Tanggal Daftar", "Dibuat Pada"
+        ])
+        
+        # Data rows
         for reg in registrations:
-            data_list.append({
-                "ID": reg.id,
-                "Nama Lengkap": reg.nama_lengkap,
-                "Nama Panggilan": reg.nama_panggilan,
-                "Jenis Kelamin": "Laki-laki" if reg.jenis_kelamin == 'L' else "Perempuan",
-                "Tempat Lahir": reg.tempat_lahir,
-                "Tanggal Lahir": reg.tanggal_lahir,
-                "Asal Sekolah": reg.asal_sekolah,
-                "Kelas": reg.kelas.upper() if reg.kelas else "",
-                "Alamat": reg.alamat,
-                "Telepon": reg.telepon,
-                "Email": reg.email,
-                "Nama Ayah": reg.nama_ayah,
-                "Telepon Ayah": reg.telepon_ayah,
-                "Nama Ibu": reg.nama_ibu,
-                "Telepon Ibu": reg.telepon_ibu,
-                "Program": reg.program,
-                "Mata Pelajaran": ", ".join(reg.mata_pelajaran) if reg.mata_pelajaran else "",
-                "Hari": reg.hari,
-                "Waktu": reg.waktu,
-                "Referensi": reg.referensi,
-                "Tanggal Daftar": reg.tanggal_daftar,
-                "Dibuat Pada": reg.created_at.strftime("%Y-%m-%d %H:%M") if reg.created_at else ""
-            })
-        
-        if not data_list:
-            # Jika data kosong, buat baris kosong dengan header
-            df = pd.DataFrame(columns=[
-                "ID", "Nama Lengkap", "Nama Panggilan", "Jenis Kelamin", 
-                "Tempat Lahir", "Tanggal Lahir", "Asal Sekolah", "Kelas", 
-                "Alamat", "Telepon", "Email", "Nama Ayah", "Telepon Ayah", 
-                "Nama Ibu", "Telepon Ibu", "Program", "Mata Pelajaran", 
-                "Hari", "Waktu", "Referensi", "Tanggal Daftar", "Dibuat Pada"
+            writer.writerow([
+                reg.id,
+                reg.nama_lengkap,
+                reg.nama_panggilan or "",
+                "Laki-laki" if reg.jenis_kelamin == 'L' else "Perempuan",
+                reg.tempat_lahir,
+                reg.tanggal_lahir,
+                reg.asal_sekolah,
+                reg.kelas.upper() if reg.kelas else "",
+                reg.alamat,
+                reg.telepon,
+                reg.email or "",
+                reg.nama_ayah,
+                reg.telepon_ayah,
+                reg.nama_ibu,
+                reg.telepon_ibu,
+                reg.program,
+                ", ".join(reg.mata_pelajaran) if reg.mata_pelajaran else "",
+                reg.hari,
+                reg.waktu,
+                reg.referensi,
+                reg.tanggal_daftar,
+                reg.created_at.strftime("%Y-%m-%d %H:%M") if reg.created_at else ""
             ])
-        else:
-            df = pd.DataFrame(data_list)
         
-        # Simpan ke buffer
-        output = io.BytesIO()
-        with pd.ExcelWriter(output, engine='openpyxl') as writer:
-            df.to_excel(writer, index=False, sheet_name='Pendaftaran')
-        
+        # Convert to bytes
         output.seek(0)
         
         # Return sebagai file download
-        filename = f"Data_Pendaftaran_BIN_Bimbel_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx"
+        filename = f"Data_Pendaftaran_BIN_Bimbel_{datetime.now().strftime('%Y%m%d_%H%M')}.csv"
         
         return StreamingResponse(
-            output,
-            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            iter([output.getvalue()]),
+            media_type="text/csv",
             headers={"Content-Disposition": f"attachment; filename={filename}"}
         )
         
     except Exception as e:
-        logger.error(f"Error exporting to Excel: {str(e)}")
+        logger.error(f"Error exporting to CSV: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Gagal mengekspor data: {str(e)}"
