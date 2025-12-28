@@ -41,21 +41,32 @@ class StatusCheck(BaseModel):
 class StatusCheckCreate(BaseModel):
     client_name: str
 
-# --- Lifespan Manager ---
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    logger.info("Memulai inisialisasi database...")
-    await init_db()
-    logger.info("Database PostgreSQL siap.")
-    yield
-    logger.info("Aplikasti dihentikan.")
+# Database initialization will be called as needed or at module level 
+# but for serverless we avoid top-level await if possible.
+# We'll use a simple flag to init once.
+_db_initialized = False
+
+async def ensure_db():
+    global _db_initialized
+    if not _db_initialized:
+        try:
+            logger.info("Memulai inisialisasi database...")
+            await init_db()
+            _db_initialized = True
+            logger.info("Database PostgreSQL siap.")
+        except Exception as e:
+            logger.error(f"Gagal inisialisasi database: {e}")
 
 # --- Inisialisasi App ---
 app = FastAPI(
     title="BIN Bimbel API", 
-    version="1.0.0",
-    lifespan=lifespan
+    version="1.0.0"
 )
+
+# Health check root for direct function testing
+@app.get("/")
+async def root_health():
+    return {"status": "ok", "engine": "FastAPI on Netlify"}
 
 api_router = APIRouter(prefix="/api")
 

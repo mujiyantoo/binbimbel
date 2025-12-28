@@ -28,9 +28,14 @@ class Base(DeclarativeBase):
     pass
 
 async def get_db():
+    # Lazy init tables on first request
+    from server import ensure_db
+    await ensure_db()
+    
     async with AsyncSessionLocal() as session:
         yield session
 
 async def init_db():
     async with engine.begin() as conn:
+        # Instead of create_all, we use run_sync
         await conn.run_sync(Base.metadata.create_all)
