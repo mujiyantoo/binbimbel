@@ -72,29 +72,39 @@ const AdminPage = () => {
   };
 
   const handleExportExcel = async () => {
-    setIsExporting(true);
-    try {
-      const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || '';
-      const response = await fetch(`${BACKEND_URL}/api/registrations/export/csv`);
+    // Client-side export as fallback
+    if (registrations.length === 0) {
+      alert('Tidak ada data untuk di-export');
+      return;
+    }
 
-      if (response.ok) {
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        const filename = `Data_Pendaftaran_BIN_Bimbel_${new Date().toISOString().split('T')[0]}.csv`;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-      } else {
-        console.error('Export failed');
-      }
+    try {
+      // Create CSV content
+      const headers = ['Nama Lengkap', 'Program', 'Kelas', 'Telepon', 'Tanggal Daftar'];
+      const csvContent = [
+        headers.join(','),
+        ...registrations.map(reg => [
+          `"${reg.nama_lengkap}"`,
+          reg.program,
+          reg.kelas.toUpperCase(),
+          reg.telepon,
+          new Date(reg.created_at).toLocaleDateString('id-ID')
+        ].join(','))
+      ].join('\n');
+
+      // Create blob and download
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Data_Pendaftaran_${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
     } catch (error) {
-      console.error('Error exporting data:', error);
-    } finally {
-      setIsExporting(false);
+      console.error('Error exporting:', error);
+      alert('Gagal export data');
     }
   };
 
@@ -135,12 +145,12 @@ const AdminPage = () => {
             <div className="flex space-x-3">
               <Button
                 onClick={handleExportExcel}
-                disabled={isExporting}
+                disabled={isExporting || registrations.length === 0}
                 variant="outline"
                 className="border-[#F89E3C] text-[#F89E3C] hover:bg-[#F89E3C] hover:text-white"
               >
                 <Download className="h-4 w-4 mr-2" />
-                {isExporting ? 'Exporting...' : 'Export ke Excel'}
+                {isExporting ? 'Exporting...' : `Export ke CSV (${registrations.length} data)`}
               </Button>
               <Button
                 onClick={fetchData}
