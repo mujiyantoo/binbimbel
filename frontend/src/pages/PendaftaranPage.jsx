@@ -207,7 +207,7 @@ const PendaftaranPage = () => {
                   <div className="w-10 h-10 bg-[#5A9C9B] rounded-lg flex items-center justify-center">
                     <User className="h-5 w-5 text-white" />
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-900">Data Calon Siswa</h2>
+                  <h2 className="text-2xl font-bold text-gray-900"><span>Data Calon Siswa</span></h2>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -243,11 +243,11 @@ const PendaftaranPage = () => {
                     >
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="L" id="laki" />
-                        <Label htmlFor="laki" className="cursor-pointer">Laki-laki</Label>
+                        <Label htmlFor="laki" className="cursor-pointer"><span>Laki-laki</span></Label>
                       </div>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="P" id="perempuan" />
-                        <Label htmlFor="perempuan" className="cursor-pointer">Perempuan</Label>
+                        <Label htmlFor="perempuan" className="cursor-pointer"><span>Perempuan</span></Label>
                       </div>
                     </RadioGroup>
                   </div>
@@ -453,7 +453,7 @@ const PendaftaranPage = () => {
                   <div className="w-10 h-10 bg-[#5A9C9B] rounded-lg flex items-center justify-center">
                     <GraduationCap className="h-5 w-5 text-white" />
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-900">Pilihan Program Bimbel</h2>
+                  <h2 className="text-2xl font-bold text-gray-900"><span>Pilihan Program Bimbel</span></h2>
                 </div>
 
                 <div className="space-y-6">
@@ -531,7 +531,7 @@ const PendaftaranPage = () => {
                   <div className="w-10 h-10 bg-[#F89E3C] rounded-lg flex items-center justify-center">
                     <Info className="h-5 w-5 text-white" />
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-900">Informasi Tambahan</h2>
+                  <h2 className="text-2xl font-bold text-gray-900"><span>Informasi Tambahan</span></h2>
                 </div>
 
                 <div className="space-y-6">
@@ -575,12 +575,12 @@ const PendaftaranPage = () => {
                       {isSubmitting ? (
                         <>
                           <span className="animate-spin mr-2">⏳</span>
-                          Mengirim...
+                          <span>Mengirim...</span>
                         </>
                       ) : (
                         <>
                           <CheckCircle className="mr-2 h-5 w-5" />
-                          Kirim Pendaftaran
+                          <span>Kirim Pendaftaran</span>
                         </>
                       )}
                     </Button>
