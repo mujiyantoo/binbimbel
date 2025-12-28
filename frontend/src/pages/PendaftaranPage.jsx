@@ -503,7 +503,6 @@ const PendaftaranPage = () => {
                           <SelectItem value="kamis">Kamis</SelectItem>
                           <SelectItem value="jumat">Jumat</SelectItem>
                           <SelectItem value="sabtu">Sabtu</SelectItem>
-                          <SelectItem value="minggu">Minggu</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -515,9 +514,7 @@ const PendaftaranPage = () => {
                           <SelectValue placeholder="Pilih Waktu" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="pagi">Pagi (08.00-12.00)</SelectItem>
-                          <SelectItem value="siang">Siang (13.00-17.00)</SelectItem>
-                          <SelectItem value="sore">Sore (17.00-20.00)</SelectItem>
+                          <SelectItem value="sore">Sore (16.00-20.00)</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
