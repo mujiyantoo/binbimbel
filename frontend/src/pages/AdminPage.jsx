@@ -22,21 +22,31 @@ const AdminPage = () => {
     try {
       // In Netlify, the API will be available at the same domain under /api
       const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || '';
+      console.log('Fetching registrations from:', `${BACKEND_URL}/api/registrations`);
 
       // Fetch registrations
       const regResponse = await fetch(`${BACKEND_URL}/api/registrations`);
-      const regData = await regResponse.json();
+      console.log('Reg Response Status:', regResponse.status);
+
+      const contentType = regResponse.headers.get("content-type");
+      if (contentType && contentType.indexOf("application/json") !== -1) {
+        const regData = await regResponse.json();
+        console.log('Reg Data:', regData);
+        if (regData.success) {
+          setRegistrations(regData.data);
+        }
+      } else {
+        const text = await regResponse.text();
+        console.error('Non-JSON response received:', text.substring(0, 200));
+      }
 
       // Fetch stats
       const statsResponse = await fetch(`${BACKEND_URL}/api/registrations/stats/summary`);
-      const statsData = await statsResponse.json();
-
-      if (regData.success) {
-        setRegistrations(regData.data);
-      }
-
-      if (statsData.success) {
-        setStats(statsData.data);
+      if (statsResponse.ok) {
+        const statsData = await statsResponse.json();
+        if (statsData.success) {
+          setStats(statsData.data);
+        }
       }
     } catch (error) {
       console.error('Error fetching data:', error);

@@ -178,13 +178,7 @@ const PendaftaranPage = () => {
     'Bahasa Indonesia',
     'Bahasa Inggris',
     'PKN',
-    'Fisika',
-    'Kimia',
-    'Biologi',
-    'Ekonomi',
-    'Sejarah',
-    'Geografi',
-    'Sosiologi'
+
   ];
 
   return (
