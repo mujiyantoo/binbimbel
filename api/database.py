@@ -17,9 +17,15 @@ if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
 elif DATABASE_URL and DATABASE_URL.startswith("postgresql://"):
     DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
 
+import logging
+logger = logging.getLogger(__name__)
+
 # Fallback for local development
 if not DATABASE_URL:
+    logger.warning("DATABASE_URL not found! Using local fallback.")
     DATABASE_URL = "postgresql+asyncpg://postgres:postgres@localhost:5432/bimbel_db"
+else:
+    logger.info(f"DATABASE_URL found: {DATABASE_URL[:30]}...")
 
 engine = create_async_engine(DATABASE_URL, echo=True)
 AsyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)

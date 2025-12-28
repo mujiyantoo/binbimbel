@@ -29,16 +29,16 @@ const AdminPage = () => {
       const regResponse = await fetch(`${BACKEND_URL}/api/registrations`);
       console.log('Reg Response Status:', regResponse.status);
 
-      const contentType = regResponse.headers.get("content-type");
-      if (contentType && contentType.indexOf("application/json") !== -1) {
-        const regData = await regResponse.json();
-        console.log('Reg Data:', regData);
-        if (regData.success) {
-          setRegistrations(regData.data);
-        }
-      } else {
-        const text = await regResponse.text();
-        console.error('Non-JSON response received:', text.substring(0, 200));
+      if (!regResponse.ok) {
+        const errorText = await regResponse.text();
+        console.error('API Error Response:', errorText.substring(0, 500));
+        throw new Error(`API returned ${regResponse.status}`);
+      }
+
+      const regData = await regResponse.json();
+      console.log('Reg Data:', regData);
+      if (regData.success) {
+        setRegistrations(regData.data);
       }
 
       // Fetch stats
