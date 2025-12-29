@@ -54,9 +54,9 @@ async def create_registration(registration: RegistrationCreate, db: AsyncSession
                 response = await client.post(MAKE_WEBHOOK_URL, json=payload, timeout=5.0)
                 
             if response.status_code == 200:
-                logger.info(f"Successfully sent data to Make.com for registration {new_reg.id}")
+                logger.info(f"Successfully sent data to Make.com for registration {new_reg.id}. Response: {response.text}")
             else:
-                logger.warning(f"Failed to send to Make.com: {response.status_code} - {response.text}")
+                logger.warning(f"Failed to send to Make.com. Status: {response.status_code}. Response: {response.text}")
                 
         except Exception as e:
             # Jangan gagalkan registrasi user cuma karena webhook gagal
