@@ -70,7 +70,8 @@ async def create_registration(registration: RegistrationCreate, db: AsyncSession
                 "registration_id": new_reg.id,
                 "nama_lengkap": new_reg.nama_lengkap,
                 "program": new_reg.program,
-                "created_at": new_reg.created_at.isoformat()
+                "created_at": new_reg.created_at.isoformat(),
+                "webhook_status": response.status_code if 'response' in locals() else "not_sent"
             }
         )
         

@@ -127,7 +127,7 @@ const PendaftaranPage = () => {
       console.error('Error submitting form:', error);
       toast({
         title: "Pendaftaran Gagal",
-        description: "Mohon cek koneksi internet Anda atau hubungi admin.",
+        description: error.message || "Mohon cek koneksi internet Anda atau hubungi admin.",
         variant: "destructive"
       });
     } finally {
