@@ -11,6 +11,8 @@ from database import get_db
 from typing import List
 import logging
 from datetime import datetime
+import httpx
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +33,35 @@ async def create_registration(registration: RegistrationCreate, db: AsyncSession
         await db.commit()
         await db.refresh(new_reg)
         
+        await db.refresh(new_reg)
+        
         logger.info(f"New registration created: {new_reg.id}")
+
+        # --- Integrasi Make.com (Backend Side) ---
+        try:
+            MAKE_WEBHOOK_URL = "https://hook.eu1.make.com/a7qtbmekxxv4h6je6tid79uxa62ub0m8"
+            
+            # Siapkan payload dari object new_reg atau registration.dict()
+            # Kita gunakan registration.dict() yang sudah divalidasi Pydantic, 
+            # ditambah ID dan timestamp dari DB jika perlu.
+            payload = registration.dict()
+            payload['id'] = new_reg.id
+            payload['created_at'] = new_reg.created_at.isoformat() if new_reg.created_at else None
+            
+            # Fire and forget-ish, tapi kita await biar pasti kirim
+            async with httpx.AsyncClient() as client:
+                # Timeout pendek agar tidak blocking user terlalu lama jika Make.com lambat
+                response = await client.post(MAKE_WEBHOOK_URL, json=payload, timeout=5.0)
+                
+            if response.status_code == 200:
+                logger.info(f"Successfully sent data to Make.com for registration {new_reg.id}")
+            else:
+                logger.warning(f"Failed to send to Make.com: {response.status_code} - {response.text}")
+                
+        except Exception as e:
+            # Jangan gagalkan registrasi user cuma karena webhook gagal
+            logger.error(f"Error sending webhook to Make.com: {str(e)}")
+
         
         return RegistrationResponse(
             success=True,

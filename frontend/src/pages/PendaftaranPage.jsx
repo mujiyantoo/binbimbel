@@ -92,30 +92,20 @@ const PendaftaranPage = () => {
 
     setIsSubmitting(true);
     try {
-      // --- EMERGENCY MODE: HARDCODED MAKE.COM URL ---
-      // Ini memastikan form tetap jalan meskipun backend mati atau file .env belum terbaca
-      const MAKE_WEBHOOK_URL = "https://hook.eu1.make.com/a7qtbmekxxv4h6je6tid79uxa62ub0m8";
+      // --- KIRIM KE BACKEND (yang akan meneruskan ke Make.com) ---
+      const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || '';
+      // Fallback url jika env tidak terbaca (opsional, sesuaikan dengan url backendmu di Vercel/Netlify)
+      const apiEndpoint = BACKEND_URL ? `${BACKEND_URL}/api/registrations` : '/api/registrations';
 
-      console.log("Mengirim data ke Make.com...", MAKE_WEBHOOK_URL);
-
-      // 1. Kirim ke Make.com (Prioritas Utama)
-      const makeResponse = await fetch(MAKE_WEBHOOK_URL, {
+      const response = await fetch(apiEndpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
 
-      // 2. Coba kirim ke Backend (Opsional/Background)
-      // Kita tidak menunggu ini untuk menampilkan pesan sukses ke user
-      const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || '';
-      fetch(`${BACKEND_URL}/api/registrations`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      }).catch(err => console.log("Backend offline (abaikan):", err));
+      const result = await response.json();
 
-      // 3. Cek hasil Make.com
-      if (makeResponse.ok) {
+      if (response.ok) {
         toast({
           title: "Pendaftaran Berhasil!",
           description: "Data Anda telah kami terima dan akan segera diproses.",
@@ -130,7 +120,7 @@ const PendaftaranPage = () => {
           persetujuan: false, tanggal_daftar: new Date().toISOString().split('T')[0]
         });
       } else {
-        throw new Error("Gagal mengirim data ke sistem pendaftaran.");
+        throw new Error(result.detail || "Gagal mengirim data pendaftaran.");
       }
 
     } catch (error) {
