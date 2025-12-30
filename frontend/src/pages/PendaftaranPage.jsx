@@ -71,6 +71,7 @@ const PendaftaranPage = () => {
     e.preventDefault();
 
     // Validasi
+    /*
     if (!formData.persetujuan) {
       toast({
         title: "Persetujuan Diperlukan",
@@ -79,6 +80,7 @@ const PendaftaranPage = () => {
       });
       return;
     }
+    */
 
     // Validasi mata pelajaran
     if (formData.mata_pelajaran.length === 0) {
@@ -203,72 +205,6 @@ const PendaftaranPage = () => {
                   </div>
 
                   <div>
-                    <Label htmlFor="nama_panggilan">Nama Panggilan</Label>
-                    <Input
-                      id="nama_panggilan"
-                      name="nama_panggilan"
-                      value={formData.nama_panggilan}
-                      onChange={handleInputChange}
-                      className="mt-2"
-                    />
-                  </div>
-
-                  <div>
-                    <Label>Jenis Kelamin *</Label>
-                    <RadioGroup
-                      value={formData.jenis_kelamin}
-                      onValueChange={(value) => handleSelectChange('jenis_kelamin', value)}
-                      className="flex space-x-4 mt-2"
-                    >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="L" id="laki" />
-                        <Label htmlFor="laki" className="cursor-pointer"><span>Laki-laki</span></Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="P" id="perempuan" />
-                        <Label htmlFor="perempuan" className="cursor-pointer"><span>Perempuan</span></Label>
-                      </div>
-                    </RadioGroup>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="tempat_lahir">Tempat Lahir *</Label>
-                    <Input
-                      id="tempat_lahir"
-                      name="tempat_lahir"
-                      value={formData.tempat_lahir}
-                      onChange={handleInputChange}
-                      required
-                      className="mt-2"
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="tanggal_lahir">Tanggal Lahir *</Label>
-                    <Input
-                      id="tanggal_lahir"
-                      name="tanggal_lahir"
-                      type="date"
-                      value={formData.tanggal_lahir}
-                      onChange={handleInputChange}
-                      required
-                      className="mt-2"
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="asal_sekolah">Asal Sekolah *</Label>
-                    <Input
-                      id="asal_sekolah"
-                      name="asal_sekolah"
-                      value={formData.asal_sekolah}
-                      onChange={handleInputChange}
-                      required
-                      className="mt-2"
-                    />
-                  </div>
-
-                  <div>
                     <Label htmlFor="kelas">Kelas yang akan ditempuh *</Label>
                     <Select value={formData.kelas} onValueChange={(value) => handleSelectChange('kelas', value)}>
                       <SelectTrigger className="mt-2">
@@ -284,19 +220,6 @@ const PendaftaranPage = () => {
                     </Select>
                   </div>
 
-                  <div className="md:col-span-2">
-                    <Label htmlFor="alamat">Alamat Rumah *</Label>
-                    <Textarea
-                      id="alamat"
-                      name="alamat"
-                      value={formData.alamat}
-                      onChange={handleInputChange}
-                      required
-                      rows={3}
-                      className="mt-2"
-                    />
-                  </div>
-
                   <div>
                     <Label htmlFor="telepon">No. Telepon/HP *</Label>
                     <Input
@@ -309,120 +232,11 @@ const PendaftaranPage = () => {
                       className="mt-2"
                     />
                   </div>
-
-                  <div>
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      className="mt-2"
-                    />
-                  </div>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Data Orang Tua/Wali */}
-            <Card className="border-2 border-gray-200">
-              <div className="h-2 bg-gradient-to-r from-[#5A9C9B] to-[#F89E3C]"></div>
-              <CardContent className="p-6 md:p-8">
-                <div className="flex items-center space-x-3 mb-6">
-                  <div className="w-10 h-10 bg-[#F89E3C] rounded-lg flex items-center justify-center">
-                    <Users className="h-5 w-5 text-white" />
-                  </div>
-                  <h2 className="text-2xl font-bold text-gray-900">Data Orang Tua</h2>
-                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <Label htmlFor="nama_ayah">Nama Ayah *</Label>
-                    <Input
-                      id="nama_ayah"
-                      name="nama_ayah"
-                      value={formData.nama_ayah}
-                      onChange={handleInputChange}
-                      required
-                      className="mt-2"
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="pekerjaan_ayah">Pekerjaan Ayah</Label>
-                    <Input
-                      id="pekerjaan_ayah"
-                      name="pekerjaan_ayah"
-                      value={formData.pekerjaan_ayah}
-                      onChange={handleInputChange}
-                      className="mt-2"
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="telepon_ayah">No. Telepon Ayah *</Label>
-                    <Input
-                      id="telepon_ayah"
-                      name="telepon_ayah"
-                      type="tel"
-                      value={formData.telepon_ayah}
-                      onChange={handleInputChange}
-                      required
-                      className="mt-2"
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="nama_ibu">Nama Ibu *</Label>
-                    <Input
-                      id="nama_ibu"
-                      name="nama_ibu"
-                      value={formData.nama_ibu}
-                      onChange={handleInputChange}
-                      required
-                      className="mt-2"
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="pekerjaan_ibu">Pekerjaan Ibu</Label>
-                    <Input
-                      id="pekerjaan_ibu"
-                      name="pekerjaan_ibu"
-                      value={formData.pekerjaan_ibu}
-                      onChange={handleInputChange}
-                      className="mt-2"
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="telepon_ibu">No. Telepon Ibu *</Label>
-                    <Input
-                      id="telepon_ibu"
-                      name="telepon_ibu"
-                      type="tel"
-                      value={formData.telepon_ibu}
-                      onChange={handleInputChange}
-                      required
-                      className="mt-2"
-                    />
-                  </div>
-
-                  <div className="md:col-span-2">
-                    <Label htmlFor="alamat_ortu">Alamat Orang Tua (jika berbeda)</Label>
-                    <Textarea
-                      id="alamat_ortu"
-                      name="alamat_ortu"
-                      value={formData.alamat_ortu}
-                      onChange={handleInputChange}
-                      rows={3}
-                      className="mt-2"
-                    />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
 
             {/* Pilihan Program */}
             <Card className="border-2 border-gray-200">
@@ -502,36 +316,6 @@ const PendaftaranPage = () => {
 
 
                 <div className="space-y-6 mt-6 border-t pt-6">
-                  <div>
-                    <Label htmlFor="referensi">Cara mengetahui bimbel ini *</Label>
-                    <Select value={formData.referensi} onValueChange={(value) => handleSelectChange('referensi', value)}>
-                      <SelectTrigger className="mt-2">
-                        <SelectValue placeholder="Pilih Sumber" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="teman">Rekomendasi teman/keluarga</SelectItem>
-                        <SelectItem value="media_sosial">Media sosial</SelectItem>
-                        <SelectItem value="brosur">Spanduk/brosur</SelectItem>
-                        <SelectItem value="sekolah">Sekolah</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* Persetujuan */}
-                  <div className="bg-gray-50 p-6 rounded-lg space-y-4">
-                    <h3 className="font-semibold text-gray-900">Persetujuan</h3>
-                    <div className="flex items-start space-x-3">
-                      <Checkbox
-                        id="persetujuan"
-                        checked={formData.persetujuan}
-                        onCheckedChange={(checked) => setFormData(prev => ({ ...prev, persetujuan: checked }))}
-                      />
-                      <Label htmlFor="persetujuan" className="text-sm leading-relaxed cursor-pointer">
-                        Saya menyatakan bahwa data yang diisi adalah benar dan bersedia mengikuti peraturan yang berlaku di BIN Bimbel. *
-                      </Label>
-                    </div>
-                  </div>
-
                   {/* Submit Button */}
                   <div className="pt-4">
                     <Button

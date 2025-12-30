@@ -54,23 +54,23 @@ class RegistrationCreate(BaseModel):
     # Data Calon Siswa
     nama_lengkap: str = Field(..., min_length=3, max_length=100)
     nama_panggilan: Optional[str] = Field(None, max_length=50)
-    jenis_kelamin: str = Field(..., pattern="^(L|P)$")
-    tempat_lahir: str = Field(..., min_length=2, max_length=100)
-    tanggal_lahir: str
-    asal_sekolah: str = Field(..., min_length=3, max_length=150)
+    jenis_kelamin: Optional[str] = None
+    tempat_lahir: Optional[str] = None
+    tanggal_lahir: Optional[str] = None
+    asal_sekolah: Optional[str] = None
     kelas: str
-    alamat: str = Field(..., min_length=10, max_length=500)
+    alamat: Optional[str] = None
     telepon: str = Field(..., min_length=10, max_length=20)
     email: Optional[EmailStr] = None
     
-    # Data Orang Tua/Wali
-    nama_ayah: str = Field(..., min_length=3, max_length=100)
-    pekerjaan_ayah: Optional[str] = Field(None, max_length=100)
-    telepon_ayah: str = Field(..., min_length=10, max_length=20)
-    nama_ibu: str = Field(..., min_length=3, max_length=100)
-    pekerjaan_ibu: Optional[str] = Field(None, max_length=100)
-    telepon_ibu: str = Field(..., min_length=10, max_length=20)
-    alamat_ortu: Optional[str] = Field(None, max_length=500)
+    # Data Orang Tua/Wali (Optional now)
+    nama_ayah: Optional[str] = None
+    pekerjaan_ayah: Optional[str] = None
+    telepon_ayah: Optional[str] = None
+    nama_ibu: Optional[str] = None
+    pekerjaan_ibu: Optional[str] = None
+    telepon_ibu: Optional[str] = None
+    alamat_ortu: Optional[str] = None
     
     # Pilihan Program Bimbel
     program: str
@@ -79,23 +79,11 @@ class RegistrationCreate(BaseModel):
     waktu: str
     
     # Informasi Tambahan
-    referensi: str
-    persetujuan: bool
+    referensi: Optional[str] = None
+    persetujuan: bool = False
     tanggal_daftar: str
     
-    @field_validator('persetujuan')
-    @classmethod
-    def validate_persetujuan(cls, v):
-        if not v:
-            raise ValueError('Persetujuan harus dicentang')
-        return v
-    
-    @field_validator('mata_pelajaran')
-    @classmethod
-    def validate_mata_pelajaran(cls, v):
-        if not v or len(v) == 0:
-            raise ValueError('Minimal pilih 1 mata pelajaran')
-        return v
+
 
 
 class Registration(BaseModel):
