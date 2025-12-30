@@ -4,7 +4,7 @@ from datetime import datetime
 import uuid
 from sqlalchemy import Column, String, DateTime, JSON, Boolean, Text
 from sqlalchemy.orm import Mapped, mapped_column
-from ..database import Base
+from database import Base
 
 
 class RegistrationModel(Base):
