@@ -17,6 +17,7 @@ const AdminPage = () => {
   const [selectedRegistration, setSelectedRegistration] = useState(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+  const [error, setError] = useState(null);
 
   const fetchData = async () => {
     setLoading(true);
@@ -29,33 +30,7 @@ const AdminPage = () => {
       console.log('Reg Response Status:', regResponse.status);
 
       if (!regResponse.ok) {
-        console.warn('Backend error, using mock data for demonstration');
-        // Use mock data as fallback
-        setRegistrations([
-          {
-            registration_id: 'demo-001',
-            nama_lengkap: 'Budi Santoso',
-            program: 'reguler',
-            kelas: 'smp 8',
-            telepon: '081234567890',
-            created_at: new Date().toISOString()
-          },
-          {
-            registration_id: 'demo-002',
-            nama_lengkap: 'Siti Nurhaliza',
-            program: 'intensif',
-            kelas: 'sma 11',
-            telepon: '081234567891',
-            created_at: new Date(Date.now() - 86400000).toISOString()
-          }
-        ]);
-        setStats({
-          total_registrations: 2,
-          by_program: { reguler: 1, intensif: 1 },
-          by_level: { smp: 1, sma: 1 }
-        });
-        setLoading(false);
-        return;
+        throw new Error(`Failed to fetch: ${regResponse.status} ${regResponse.statusText}`);
       }
 
       const regData = await regResponse.json();
@@ -74,22 +49,8 @@ const AdminPage = () => {
       }
     } catch (error) {
       console.error('Error fetching data:', error);
-      // Use mock data on error
-      setRegistrations([
-        {
-          registration_id: 'demo-001',
-          nama_lengkap: 'Budi Santoso (Demo)',
-          program: 'reguler',
-          kelas: 'smp 8',
-          telepon: '081234567890',
-          created_at: new Date().toISOString()
-        }
-      ]);
-      setStats({
-        total_registrations: 1,
-        by_program: { reguler: 1 },
-        by_level: { smp: 1 }
-      });
+      setError(error.message);
+      setRegistrations([]);
     } finally {
       setLoading(false);
     }
@@ -315,6 +276,14 @@ const AdminPage = () => {
               {loading ? (
                 <div className="text-center py-12">
                   <p className="text-gray-600">Loading...</p>
+                </div>
+              ) : error ? (
+                <div className="text-center py-12">
+                  <div className="bg-red-50 text-red-600 p-4 rounded-lg inline-block">
+                    <p className="font-bold">Error loading data</p>
+                    <p className="text-sm">{error}</p>
+                    <Button onClick={fetchData} variant="outline" className="mt-4 border-red-200 hover:bg-red-100">Try Again</Button>
+                  </div>
                 </div>
               ) : registrations.length === 0 ? (
                 <div className="text-center py-12">
