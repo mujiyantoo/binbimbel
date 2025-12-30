@@ -186,7 +186,7 @@ const PendaftaranPage = () => {
                   <div className="w-10 h-10 bg-[#5A9C9B] rounded-lg flex items-center justify-center">
                     <User className="h-5 w-5 text-white" />
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-900"><span>Data Calon Siswa</span></h2>
+                  <h2 className="text-2xl font-bold text-gray-900"><span>Data Siswa</span></h2>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -333,7 +333,7 @@ const PendaftaranPage = () => {
                   <div className="w-10 h-10 bg-[#F89E3C] rounded-lg flex items-center justify-center">
                     <Users className="h-5 w-5 text-white" />
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-900">Data Orang Tua/Wali</h2>
+                  <h2 className="text-2xl font-bold text-gray-900">Data Orang Tua</h2>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -432,7 +432,7 @@ const PendaftaranPage = () => {
                   <div className="w-10 h-10 bg-[#5A9C9B] rounded-lg flex items-center justify-center">
                     <GraduationCap className="h-5 w-5 text-white" />
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-900"><span>Pilihan Program Bimbel</span></h2>
+                  <h2 className="text-2xl font-bold text-gray-900"><span>Program Bimbel</span></h2>
                 </div>
 
                 <div className="space-y-6">
@@ -499,21 +499,9 @@ const PendaftaranPage = () => {
                     </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
 
-            {/* Informasi Tambahan */}
-            <Card className="border-2 border-gray-200">
-              <div className="h-2 bg-gradient-to-r from-[#5A9C9B] to-[#F89E3C]"></div>
-              <CardContent className="p-6 md:p-8">
-                <div className="flex items-center space-x-3 mb-6">
-                  <div className="w-10 h-10 bg-[#F89E3C] rounded-lg flex items-center justify-center">
-                    <Info className="h-5 w-5 text-white" />
-                  </div>
-                  <h2 className="text-2xl font-bold text-gray-900"><span>Informasi Tambahan</span></h2>
-                </div>
 
-                <div className="space-y-6">
+                <div className="space-y-6 mt-6 border-t pt-6">
                   <div>
                     <Label htmlFor="referensi">Cara mengetahui bimbel ini *</Label>
                     <Select value={formData.referensi} onValueChange={(value) => handleSelectChange('referensi', value)}>
@@ -557,10 +545,12 @@ const PendaftaranPage = () => {
                 </div>
               </CardContent>
             </Card>
-          </form>
-        </div>
-      </section>
-    </div>
+
+
+          </form >
+        </div >
+      </section >
+    </div >
   );
 };
 
