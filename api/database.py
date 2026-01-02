@@ -24,10 +24,19 @@ logger = logging.getLogger(__name__)
 if not DATABASE_URL:
     logger.warning("DATABASE_URL not found! Using local fallback.")
     DATABASE_URL = "postgresql+asyncpg://postgres:postgres@localhost:5432/bimbel_db"
+    engine = create_async_engine(DATABASE_URL, echo=True)
 else:
     logger.info(f"DATABASE_URL found: {DATABASE_URL[:30]}...")
 
-engine = create_async_engine(DATABASE_URL, echo=True)
+    # Konfigurasi khusus untuk Supabase/Postgres dengan AsyncPG
+    # Penting: Supabase Transaction Pooler (port 6543) tidak support prepared statements
+    connect_args = {"statement_cache_size": 0}
+    
+    engine = create_async_engine(
+        DATABASE_URL, 
+        echo=True,
+        connect_args=connect_args
+    )
 AsyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
 class Base(DeclarativeBase):
