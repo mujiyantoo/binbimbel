@@ -209,16 +209,26 @@ async def get_registration_stats(db: AsyncSession = Depends(get_db)):
         # Total registrations
         total_stmt = select(func.count(RegistrationModel.id))
         total_result = await db.execute(total_stmt)
-        total = total_result.scalar()
+        total = total_result.scalar() or 0
+        
+        if total == 0:
+            return {
+                "success": True,
+                "data": {
+                    "total_registrations": 0,
+                    "by_program": {},
+                    "by_level": {}
+                }
+            }
         
         # Count by program
         program_stmt = select(RegistrationModel.program, func.count(RegistrationModel.id)).group_by(RegistrationModel.program)
         program_result = await db.execute(program_stmt)
         program_stats = {row[0]: row[1] for row in program_result.all()}
         
-        # Count by level (Substr logic)
-        # Note: SUBSTR works in most Postgres versions
-        level_stmt = select(func.substr(RegistrationModel.kelas, 1, 2), func.count(RegistrationModel.id)).group_by(func.substr(RegistrationModel.kelas, 1, 2))
+        # Count by level (Safe Substring)
+        # func.substring(str, start, length) -> 1-based index in SQL
+        level_stmt = select(func.substring(RegistrationModel.kelas, 1, 2), func.count(RegistrationModel.id)).group_by(func.substring(RegistrationModel.kelas, 1, 2))
         level_result = await db.execute(level_stmt)
         level_stats = {row[0]: row[1] for row in level_result.all()}
         
@@ -233,10 +243,15 @@ async def get_registration_stats(db: AsyncSession = Depends(get_db)):
         
     except Exception as e:
         logger.error(f"Error fetching stats: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Terjadi kesalahan saat mengambil statistik"
-        )
+        # Return empty stats on error instead of 500 to keep dashboard alive
+        return {
+            "success": False,
+            "data": {
+                "total_registrations": 0,
+                "by_program": {},
+                "by_level": {}
+            }
+        }
 import csv
 import io
 from fastapi.responses import StreamingResponse
