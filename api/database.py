@@ -32,10 +32,13 @@ else:
     # Penting: Supabase Transaction Pooler (port 6543) tidak support prepared statements
     connect_args = {"statement_cache_size": 0}
     
+    logger.info(f"Initializing DB with connect_args: {connect_args}")
+    
     engine = create_async_engine(
         DATABASE_URL, 
         echo=True,
-        connect_args=connect_args
+        connect_args=connect_args,
+        pool_pre_ping=True
     )
 AsyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
