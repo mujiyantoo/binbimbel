@@ -82,11 +82,11 @@ async def create_registration(registration: RegistrationCreate, db: AsyncSession
             detail=str(e)
         )
     except Exception as e:
-        logger.error(f"Error creating registration: {str(e)}")
+        logger.error(f"Error creating registration: {e}")
         await db.rollback()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Terjadi kesalahan saat memproses pendaftaran. Silakan coba lagi."
+            detail=f"DEBUG ERROR: {str(e)}"
         )
 
 
