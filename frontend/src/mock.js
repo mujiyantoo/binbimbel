@@ -211,7 +211,7 @@ export const contactInfo = {
       id: 1,
       type: 'Kantor Pusat',
       address: 'JL. Cisalam Kubang Rt.01 RW.05 Rancamacan Kulon - Karikil - Mangkubumi, Kota Tasikmalaya',
-      mapUrl: 'https://maps.google.com/?q=Tasikmalaya'
+      mapUrl: 'https://maps.google.com/?q=JL.+Cisalam+Kubang+Rt.01+RW.05+Rancamacan+Kulon'
     },
     {
       id: 2,
