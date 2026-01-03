@@ -15,8 +15,8 @@ const Footer = () => {
               alt="BIN Bimbel"
               className="h-16 w-auto brightness-0 invert"
             />
-            <p className="text-sm text-gray-300">
-              Bimbingan Intensif Nusantara<br />
+            <p className="text-gray-100 text-sm">
+              Bina Insan Nusantara<br />
               Bright Excellence
             </p>
             <p className="text-sm text-gray-400">

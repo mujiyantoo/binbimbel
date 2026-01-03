@@ -35,7 +35,7 @@ const TentangPage = () => {
             Tentang BIN Bimbel
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Bimbingan Intensif Nusantara - Bright Excellence
+            Bina Insan Nusantara - Bright Excellence
           </p>
         </div>
       </section>
@@ -51,7 +51,7 @@ const TentangPage = () => {
                 </h2>
                 <div className="space-y-4 text-gray-700 leading-relaxed">
                   <p>
-                    <strong className="text-[#5A9C9B]">Bimbingan Intensif Nusantara (BIN)</strong> adalah lembaga bimbingan belajar yang berkomitmen untuk membantu siswa mencapai prestasi akademik terbaik mereka. Dengan tagline "Bright Excellence", kami percaya bahwa setiap siswa memiliki potensi cemerlang yang perlu dikembangkan melalui metode pembelajaran yang tepat.
+                    <strong className="text-[#5A9C9B]">Bina Insan Nusantara (BIN)</strong> adalah lembaga bimbingan belajar yang berkomitmen untuk membantu siswa mencapai prestasi akademik terbaik mereka. Dengan tagline "Bright Excellence", kami percaya bahwa setiap siswa memiliki potensi cemerlang yang perlu dikembangkan melalui metode pembelajaran yang tepat.
                   </p>
                   <p>
                     Kami menawarkan berbagai program bimbingan belajar mulai dari tingkat SD, SMP, hingga SMA, termasuk persiapan UTBK untuk masuk perguruan tinggi. Dengan tentor yang berpengalaman dan berkualitas, kami menggunakan pendekatan pembelajaran yang tidak hanya fokus pada penguasaan materi, tetapi juga pemahaman konsep yang mendalam.
@@ -68,8 +68,8 @@ const TentangPage = () => {
               {values.map((value, index) => {
                 const Icon = value.icon;
                 return (
-                  <Card 
-                    key={index} 
+                  <Card
+                    key={index}
                     className="border-2 hover:border-[#5A9C9B] transition-all hover:shadow-lg animate-fadeInUp"
                     style={{ animationDelay: `${index * 0.1}s` }}
                   >
