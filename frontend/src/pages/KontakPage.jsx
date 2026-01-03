@@ -66,23 +66,33 @@ const KontakPage = () => {
                   </div>
                   <div className="space-y-3">
                     <a
-                      href={`https://instagram.com/${contactInfo.social.instagram.replace('@', '')}`}
+                      href="https://www.instagram.com/bin.familynew?igsh=MWFqdjhndGU5bWIzZg=="
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <Button className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-medium">
-                        <Instagram className="h-4 w-4 mr-2" />
-                        {contactInfo.social.instagram}
+                      <Button className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-medium flex items-center justify-center space-x-2">
+                        <img src="/icons/instagram.png" alt="Instagram" className="w-5 h-5" />
+                        <span>@bin.familynew</span>
                       </Button>
                     </a>
                     <a
-                      href={`https://${contactInfo.social.website}`}
+                      href="https://tiktok.com/@bunia_bin"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <Button className="w-full bg-[#5A9C9B] hover:bg-[#4a8584] text-white font-medium">
-                        <Globe className="h-4 w-4 mr-2" />
-                        {contactInfo.social.website}
+                      <Button className="w-full bg-black hover:bg-gray-800 text-white font-medium flex items-center justify-center space-x-2">
+                        <img src="/icons/tiktok.png" alt="TikTok" className="w-5 h-5 rounded-full" />
+                        <span>@bunia_bin</span>
+                      </Button>
+                    </a>
+                    <a
+                      href="https://www.youtube.com/@binbimbel8284"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Button className="w-full bg-[#FF0000] hover:bg-[#cc0000] text-white font-medium flex items-center justify-center space-x-2">
+                        <img src="/icons/youtube.png" alt="YouTube" className="w-5 h-5 rounded-full" />
+                        <span>BIN Bimbel</span>
                       </Button>
                     </a>
                   </div>
@@ -105,16 +115,18 @@ const KontakPage = () => {
                       <h3 className="text-xl font-bold text-gray-900">{location.type}</h3>
                     </div>
                     <p className="text-gray-700 leading-relaxed mb-4">{location.address}</p>
-                    <a
-                      href={location.mapUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <Button variant="outline" className="w-full border-2 border-[#5A9C9B] text-[#5A9C9B] hover:bg-[#5A9C9B] hover:text-white font-medium">
-                        <MapPin className="h-4 w-4 mr-2" />
-                        Lihat di Google Maps
-                      </Button>
-                    </a>
+                    {location.type !== 'Kantor Pusat' && (
+                      <a
+                        href={location.mapUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Button variant="outline" className="w-full border-2 border-[#5A9C9B] text-[#5A9C9B] hover:bg-[#5A9C9B] hover:text-white font-medium">
+                          <MapPin className="h-4 w-4 mr-2" />
+                          Lihat di Google Maps
+                        </Button>
+                      </a>
+                    )}
                   </CardContent>
                 </Card>
               ))}
