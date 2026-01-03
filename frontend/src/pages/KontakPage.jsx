@@ -39,7 +39,7 @@ const KontakPage = () => {
                       <div key={index} className="space-y-1">
                         <p className="font-semibold text-gray-900">{contact.name}</p>
                         <a
-                          href={`https://wa.me/${contact.number.replace(/\s/g, '')}`}
+                          href={`https://wa.me/62${contact.number.replace(/\s/g, '').substring(1)}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="block"
@@ -93,8 +93,8 @@ const KontakPage = () => {
             {/* Locations */}
             <div className="space-y-6">
               {contactInfo.locations.map((location) => (
-                <Card 
-                  key={location.id} 
+                <Card
+                  key={location.id}
                   className="border-2 hover:border-[#5A9C9B] transition-all hover:shadow-lg"
                 >
                   <CardContent className="p-6">
