@@ -61,7 +61,7 @@ const PendaftaranPage = () => {
         e.preventDefault();
         setIsSubmitting(true);
 
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyPAEpAkssdOO1YjLq7R1sfg6Hye7iibni0ZqhkDO41ss_UAICjrDS28XqZxk-gWMbKmw/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby7JDqpvQ1-otvcYB95QRZzy-d_Z3JPRdhSqynt9UfQ-V_YPr3Y4mCogGuSEgm6imHVow/exec';
 
         try {
             const formDataToSend = new FormData();
