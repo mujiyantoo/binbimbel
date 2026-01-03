@@ -16,7 +16,7 @@ const Footer = () => {
               className="h-16 w-auto brightness-0 invert"
             />
             <p className="text-sm text-gray-300">
-              Bimbingan Intensif Nusantara<br/>
+              Bimbingan Intensif Nusantara<br />
               Bright Excellence
             </p>
             <p className="text-sm text-gray-400">
@@ -98,22 +98,31 @@ const Footer = () => {
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="flex items-center space-x-4">
               <a
-                href={`https://instagram.com/${contactInfo.social.instagram.replace('@', '')}`}
+                href="https://tiktok.com/@bunia_bin"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center space-x-2 text-gray-300 hover:text-[#F89E3C] transition-colors"
               >
-                <Instagram className="h-5 w-5" />
-                <span className="text-sm">{contactInfo.social.instagram}</span>
+                <span className="text-xl">🎵</span>
+                <span className="text-sm">@bunia_bin</span>
               </a>
               <a
-                href={`https://${contactInfo.social.website}`}
+                href="https://www.youtube.com/@binbimbel8284"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center space-x-2 text-gray-300 hover:text-[#F89E3C] transition-colors"
               >
                 <Globe className="h-5 w-5" />
-                <span className="text-sm">{contactInfo.social.website}</span>
+                <span className="text-sm">BIN Bimbel</span>
+              </a>
+              <a
+                href="https://www.instagram.com/bin.familynew?igsh=MWFqdjhndGU5bWIzZg=="
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center space-x-2 text-gray-300 hover:text-[#F89E3C] transition-colors"
+              >
+                <Instagram className="h-5 w-5" />
+                <span className="text-sm">@bin.familynew</span>
               </a>
             </div>
             <p className="text-sm text-gray-400">

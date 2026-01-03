@@ -125,18 +125,41 @@ const TikTokPage = () => {
 
                     {/* Follow CTA */}
                     <div className="text-center mt-16 animate-fadeInUp">
-                        <p className="text-xl text-gray-600 mb-6">
-                            Jangan lupa follow TikTok kami untuk update seru lainnya!
+                        <p className="text-xl text-gray-600 mb-8">
+                            Jangan lupa follow media sosial kami di :
                         </p>
-                        <a
-                            href="https://www.tiktok.com/@binbimbel_official"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            <Button variant="outline" className="border-2 border-black text-black hover:bg-black hover:text-white font-bold px-8 py-6 text-lg rounded-full transition-all">
-                                @binbimbel_official
-                            </Button>
-                        </a>
+                        <div className="flex flex-col md:flex-row justify-center items-center gap-4">
+                            <a
+                                href="https://tiktok.com/@bunia_bin"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <Button className="bg-black hover:bg-gray-800 text-white font-bold px-8 py-6 text-lg rounded-full transition-all flex items-center space-x-2 w-64 justify-center">
+                                    <span className="text-xl">🎵</span>
+                                    <span>@bunia_bin</span>
+                                </Button>
+                            </a>
+                            <a
+                                href="https://www.youtube.com/@binbimbel8284"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <Button className="bg-[#FF0000] hover:bg-[#cc0000] text-white font-bold px-8 py-6 text-lg rounded-full transition-all flex items-center space-x-2 w-64 justify-center">
+                                    <Play className="h-6 w-6 fill-current" />
+                                    <span>BIN Bimbel</span>
+                                </Button>
+                            </a>
+                            <a
+                                href="https://www.instagram.com/bin.familynew?igsh=MWFqdjhndGU5bWIzZg=="
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <Button className="bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045] hover:opacity-90 text-white font-bold px-8 py-6 text-lg rounded-full transition-all flex items-center space-x-2 w-64 justify-center">
+                                    <Smartphone className="h-6 w-6" />
+                                    <span>@bin.familynew</span>
+                                </Button>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </section>
