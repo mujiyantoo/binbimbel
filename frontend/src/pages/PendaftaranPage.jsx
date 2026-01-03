@@ -61,25 +61,65 @@ const PendaftaranPage = () => {
         e.preventDefault();
         setIsSubmitting(true);
 
-        // TODO: Integrasi Google Form
-        // Nanti kita akan mengganti logika ini untuk mengirim ke Google Form
-        // Kita butuh URL Action Form dan Entry ID untuk setiap field.
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyPAEpAkssdOO1YjLq7R1sfg6Hye7iibni0ZqhkDO41ss_UAICjrDS28XqZxk-gWMbKmw/exec';
 
         try {
-            // Simulasi sukses sementara
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            const formDataToSend = new FormData();
 
+            // Append all fields to FormData
+            Object.keys(formData).forEach(key => {
+                if (key === 'mata_pelajaran' && Array.isArray(formData[key])) {
+                    formDataToSend.append(key, formData[key].join(', '));
+                } else if (key === 'persetujuan') {
+                    // Skip persetujuan or send as string
+                    formDataToSend.append(key, formData[key] ? 'Ya' : 'Tidak');
+                } else {
+                    formDataToSend.append(key, formData[key]);
+                }
+            });
+
+            // Google Apps Script usually requires no-cors for simple POSTs from client-side
+            // unless configured with specific CORS headers.
+            // We'll try 'no-cors' mode which means we won't get a readable JSON response 
+            // but the request will go through.
+            await fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: formDataToSend,
+                mode: 'no-cors'
+            });
+
+            // Since we can't read the response in no-cors, we assume success if no error was thrown.
             toast({
-                title: "Form Belum Terhubung",
-                description: "Mohon sediakan link Google Form Anda agar saya bisa menyambungkannya.",
-                variant: "warning",
+                title: "Pendaftaran Berhasil!",
+                description: "Data Anda telah kami kirim.",
+                variant: "success",
+            });
+
+            // Reset form
+            setFormData({
+                nama_lengkap: '',
+                nama_panggilan: '',
+                jenis_kelamin: 'L',
+                tempat_lahir: '',
+                tanggal_lahir: '',
+                asal_sekolah: '',
+                kelas: '',
+                alamat: '',
+                telepon: '',
+                email: '',
+                program: '',
+                mata_pelajaran: [],
+                hari: '',
+                waktu: '',
+                referensi: '',
+                persetujuan: false
             });
 
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Error submitting form:', error);
             toast({
-                title: "Gagal",
-                description: "Terjadi kesalahan.",
+                title: "Gagal Mendaftar",
+                description: "Mohon periksa kembali koneksi internet anda.",
                 variant: "destructive",
             });
         } finally {
