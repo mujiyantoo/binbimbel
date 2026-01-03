@@ -34,9 +34,7 @@ const PendaftaranPage = () => {
     });
 
     const mataPelajaran = [
-        'Matematika', 'Bahasa Indonesia', 'Bahasa Inggris',
-        'IPA (Fisika/Kimia/Biologi)', 'IPS (Sejarah/Geografi/Sosiologi/Ekonomi)',
-        'PAI', 'Tematik (SD)', 'Calistung (TK/SD)'
+        'Matematika', 'IPA', 'IPS', 'PKN', 'B. Indonesia', 'B. Inggris'
     ];
 
     const handleInputChange = (e) => {
