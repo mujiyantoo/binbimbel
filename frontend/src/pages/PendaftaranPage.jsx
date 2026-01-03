@@ -61,7 +61,7 @@ const PendaftaranPage = () => {
         e.preventDefault();
         setIsSubmitting(true);
 
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsEZ9_RbtitcGe6K5p3E9ut4d3T8EvHvHHjjuaqSUJ65rX8oP7sQrsTKUAUInmzYglEQ/exec';
+        const SCRIPT_URL = 'https://hook.eu1.make.com/1aa4e6n9nt7fvlvwp7fdl9k56bq40';
 
         try {
             const formDataToSend = new FormData();
