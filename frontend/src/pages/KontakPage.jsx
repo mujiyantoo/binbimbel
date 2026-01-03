@@ -39,7 +39,7 @@ const KontakPage = () => {
                       <div key={index} className="space-y-1">
                         <p className="font-semibold text-gray-900">{contact.name}</p>
                         <a
-                          href={`https://wa.me/62${contact.number.replace(/\s/g, '').substring(1)}`}
+                          href={`https://wa.me/${contact.number.replace(/\D/g, '').replace(/^0/, '62')}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="block"
