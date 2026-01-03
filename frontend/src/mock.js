@@ -198,6 +198,18 @@ export const galleryImages = [
     url: '/gallery/img5.jpg',
     caption: 'Outing Class',
     category: 'activity'
+  },
+  {
+    id: 6,
+    url: '/gallery/img6.jpg',
+    caption: 'Suasana Pendaftaran',
+    category: 'activity'
+  },
+  {
+    id: 7,
+    url: '/gallery/img7.jpg',
+    caption: 'Interaksi dengan Siswa',
+    category: 'activity'
   }
 ];
 
