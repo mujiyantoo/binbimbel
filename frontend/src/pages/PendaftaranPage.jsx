@@ -82,13 +82,15 @@ const PendaftaranPage = () => {
             // unless configured with specific CORS headers.
             // We'll try 'no-cors' mode which means we won't get a readable JSON response 
             // but the request will go through.
-            await fetch(SCRIPT_URL, {
+            const response = await fetch(SCRIPT_URL, {
                 method: 'POST',
-                body: formDataToSend,
-                mode: 'no-cors'
+                body: formDataToSend
             });
 
-            // Since we can't read the response in no-cors, we assume success if no error was thrown.
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
             toast({
                 title: "Pendaftaran Berhasil!",
                 description: "Data Anda telah kami kirim.",
