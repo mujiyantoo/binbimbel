@@ -171,39 +171,33 @@ export const whyChooseUs = [
 export const galleryImages = [
   {
     id: 1,
-    url: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800',
-    caption: 'Suasana Kelas Reguler',
+    url: '/gallery/img1.jpg',
+    caption: 'Suasana Belajar di Kelas',
     category: 'classroom'
   },
   {
     id: 2,
-    url: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800',
-    caption: 'Kelas Intensif UTBK',
-    category: 'intensive'
-  },
-  {
-    id: 3,
-    url: 'https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=800',
-    caption: 'Kelas Privat',
-    category: 'private'
-  },
-  {
-    id: 4,
-    url: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800',
-    caption: 'Diskusi Kelompok',
+    url: '/gallery/img2.jpg',
+    caption: 'Foto Bersama Siswa',
     category: 'activity'
   },
   {
-    id: 5,
-    url: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800',
-    caption: 'Pembelajaran Interaktif',
+    id: 3,
+    url: '/gallery/img3.jpg',
+    caption: 'Kegiatan Bimbingan',
     category: 'classroom'
   },
   {
-    id: 6,
-    url: 'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?w=800',
-    caption: 'Try Out UTBK',
+    id: 4,
+    url: '/gallery/img4.jpg',
+    caption: 'Prestasi Siswa',
     category: 'intensive'
+  },
+  {
+    id: 5,
+    url: '/gallery/img5.jpg',
+    caption: 'Outing Class',
+    category: 'activity'
   }
 ];
 
