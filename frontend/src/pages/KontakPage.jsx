@@ -62,52 +62,40 @@ const KontakPage = () => {
                     <div className="w-12 h-12 bg-gradient-to-br from-[#F89E3C] to-[#e68d2b] rounded-lg flex items-center justify-center">
                       <Instagram className="h-6 w-6 text-white" />
                     </div>
-                    <h3 className="text-xl font-bold text-gray-900">Media Sosial & Lokasi</h3>
+                    <h3 className="text-xl font-bold text-gray-900">Media Sosial</h3>
                   </div>
 
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
-                    {/* Social Buttons (Left) */}
-                    <div className="space-y-3">
-                      <a
-                        href="https://www.instagram.com/bin.familynew?igsh=MWFqdjhndGU5bWIzZg=="
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Button variant="outline" className="w-full border-2 border-pink-500 text-pink-500 hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 hover:text-white font-bold flex items-center justify-center space-x-2 transition-all">
-                          <img src="/icons/instagram.png" alt="Instagram" className="w-5 h-5" />
-                          <span>@bin.familynew</span>
-                        </Button>
-                      </a>
-                      <a
-                        href="https://tiktok.com/@bunia_bin"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Button variant="outline" className="w-full border-2 border-black text-black hover:bg-black hover:text-white font-bold flex items-center justify-center space-x-2 transition-all">
-                          <img src="/icons/tiktok.png" alt="TikTok" className="w-5 h-5 rounded-full" />
-                          <span>@bunia_bin</span>
-                        </Button>
-                      </a>
-                      <a
-                        href="https://www.youtube.com/@binbimbel8284"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Button variant="outline" className="w-full border-2 border-[#FF0000] text-[#FF0000] hover:bg-[#FF0000] hover:text-white font-bold flex items-center justify-center space-x-2 transition-all">
-                          <img src="/icons/youtube.png" alt="YouTube" className="w-5 h-5 rounded-full" />
-                          <span>BIN Bimbel</span>
-                        </Button>
-                      </a>
-                    </div>
-
-                    {/* Barcode Section (Right) */}
-                    <div className="flex flex-col items-center justify-center space-y-2 pt-4 lg:pt-0 lg:border-l lg:border-gray-100 h-full">
-                      <h3 className="font-bold text-sm text-gray-900 uppercase tracking-widest text-center">LOKASI BIN BIMBEL</h3>
-                      <div className="bg-white p-2 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow cursor-pointer" onClick={() => window.open('https://maps.google.com/?q=JL.+Cisalam+Kubang+Rt.01+RW.05+Rancamacan+Kulon', '_blank')}>
-                        <img src="/images/barcode.png" alt="Scan QR Location" className="w-32 h-32 object-contain" />
-                      </div>
-                      <p className="text-xs text-gray-400 text-center">Scan untuk petunjuk arah</p>
-                    </div>
+                  <div className="space-y-3">
+                    <a
+                      href="https://www.instagram.com/bin.familynew?igsh=MWFqdjhndGU5bWIzZg=="
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Button variant="outline" className="w-full border-2 border-pink-500 text-pink-500 hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 hover:text-white font-bold flex items-center justify-center space-x-2 transition-all">
+                        <img src="/icons/instagram.png" alt="Instagram" className="w-5 h-5" />
+                        <span>@bin.familynew</span>
+                      </Button>
+                    </a>
+                    <a
+                      href="https://tiktok.com/@bunia_bin"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Button variant="outline" className="w-full border-2 border-black text-black hover:bg-black hover:text-white font-bold flex items-center justify-center space-x-2 transition-all">
+                        <img src="/icons/tiktok.png" alt="TikTok" className="w-5 h-5 rounded-full" />
+                        <span>@bunia_bin</span>
+                      </Button>
+                    </a>
+                    <a
+                      href="https://www.youtube.com/@binbimbel8284"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Button variant="outline" className="w-full border-2 border-[#FF0000] text-[#FF0000] hover:bg-[#FF0000] hover:text-white font-bold flex items-center justify-center space-x-2 transition-all">
+                        <img src="/icons/youtube.png" alt="YouTube" className="w-5 h-5 rounded-full" />
+                        <span>BIN Bimbel</span>
+                      </Button>
+                    </a>
                   </div>
                 </CardContent>
               </Card>
