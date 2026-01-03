@@ -1,6 +1,6 @@
 import React from "react";
 import "./App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import HomePage from "./pages/HomePage";
@@ -23,7 +23,7 @@ function App() {
           <Route path="/tentang" element={<TentangPage />} />
           <Route path="/galeri" element={<GaleriPage />} />
           <Route path="/kontak" element={<KontakPage />} />
-          <Route path="/pendaftaran" element={<PendaftaranPage />} />
+          <Route path="/pendaftaran" element={<Navigate to="/kontak" replace />} />
           <Route path="/admin" element={<AdminPage />} />
         </Routes>
         <Footer />

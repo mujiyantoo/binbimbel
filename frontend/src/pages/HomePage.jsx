@@ -21,7 +21,7 @@ const HomePage = () => {
         {/* Decorative elements */}
         <div className="absolute top-20 right-10 w-72 h-72 bg-[#5A9C9B]/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-10 left-10 w-96 h-96 bg-[#F89E3C]/10 rounded-full blur-3xl"></div>
-        
+
         <div className="container mx-auto relative z-10">
           <div className="max-w-4xl mx-auto text-center space-y-8 animate-fadeInUp">
             {/* Badge */}
@@ -32,19 +32,19 @@ const HomePage = () => {
 
             {/* Heading */}
             <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight">
-              BELAJAR JADI SERU<br/>
+              BELAJAR JADI SERU<br />
               <span className="text-[#5A9C9B]">PRESTASI SEMAKIN MAJU!</span>
             </h1>
 
             {/* Subtitle */}
             <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-              Metode Cerdas, Hasil Tuntas<br/>
+              Metode Cerdas, Hasil Tuntas<br />
               Siap Hadapi Ujian Bersama BIN Bimbel
             </p>
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
-              <Link to="/pendaftaran">
+              <Link to="/kontak">
                 <Button className="bg-[#5A9C9B] hover:bg-[#4a8584] text-white font-semibold px-8 py-6 text-lg rounded-full transition-all hover:scale-105 shadow-lg">
                   Daftar Sekarang
                   <ArrowRight className="ml-2 h-5 w-5" />
@@ -92,8 +92,8 @@ const HomePage = () => {
             {whyChooseUs.map((item, index) => {
               const Icon = iconMap[item.icon];
               return (
-                <Card 
-                  key={item.id} 
+                <Card
+                  key={item.id}
                   className="border-2 border-gray-100 hover:border-[#5A9C9B] transition-all hover:shadow-xl group cursor-pointer animate-fadeInUp"
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
@@ -125,8 +125,8 @@ const HomePage = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {programs.slice(0, 3).map((program, index) => (
-              <Card 
-                key={program.id} 
+              <Card
+                key={program.id}
                 className="border-2 hover:border-[#F89E3C] transition-all hover:shadow-2xl group overflow-hidden animate-fadeInUp"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
@@ -158,7 +158,7 @@ const HomePage = () => {
                     ))}
                   </ul>
 
-                  <Link to="/pendaftaran" className="block">
+                  <Link to="/kontak" className="block">
                     <Button className="w-full bg-[#F89E3C] hover:bg-[#e68d2b] text-white font-semibold rounded-full group-hover:scale-105 transition-all">
                       Daftar Program Ini
                     </Button>
@@ -194,7 +194,7 @@ const HomePage = () => {
                     Diskon Spesial 'Early Bird' 20%!
                   </h2>
                   <p className="text-lg text-gray-700">
-                    Hanya untuk 30 pendaftar pertama bulan ini!<br/>
+                    Hanya untuk 30 pendaftar pertama bulan ini!<br />
                     <span className="font-semibold text-[#5A9C9B]">+ Bonus Kakak Adik & Referral Teman!</span>
                   </p>
                   <div className="flex items-center space-x-2 text-sm text-gray-600">
@@ -203,7 +203,7 @@ const HomePage = () => {
                   </div>
                 </div>
                 <div className="flex-shrink-0">
-                  <Link to="/pendaftaran">
+                  <Link to="/kontak">
                     <Button className="bg-[#5A9C9B] hover:bg-[#4a8584] text-white font-bold px-10 py-6 text-lg rounded-full shadow-lg hover:scale-105 transition-all">
                       Daftar & Dapatkan Diskon!
                     </Button>
@@ -229,8 +229,8 @@ const HomePage = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {testimonials.slice(0, 6).map((testimonial, index) => (
-              <Card 
-                key={testimonial.id} 
+              <Card
+                key={testimonial.id}
                 className="border-2 border-gray-100 hover:border-[#F89E3C] transition-all hover:shadow-xl animate-fadeInUp"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
