@@ -103,7 +103,7 @@ const Footer = () => {
                 rel="noopener noreferrer"
                 className="flex items-center space-x-2 text-gray-300 hover:text-[#F89E3C] transition-colors"
               >
-                <span className="text-xl">🎵</span>
+                <img src="/icons/tiktok.png" alt="TikTok" className="w-5 h-5 rounded-full" />
                 <span className="text-sm">@bunia_bin</span>
               </a>
               <a
@@ -112,7 +112,7 @@ const Footer = () => {
                 rel="noopener noreferrer"
                 className="flex items-center space-x-2 text-gray-300 hover:text-[#F89E3C] transition-colors"
               >
-                <Globe className="h-5 w-5" />
+                <img src="/icons/youtube.png" alt="YouTube" className="w-5 h-5 rounded-full" />
                 <span className="text-sm">BIN Bimbel</span>
               </a>
               <a
@@ -121,7 +121,7 @@ const Footer = () => {
                 rel="noopener noreferrer"
                 className="flex items-center space-x-2 text-gray-300 hover:text-[#F89E3C] transition-colors"
               >
-                <Instagram className="h-5 w-5" />
+                <img src="/icons/instagram.png" alt="Instagram" className="w-5 h-5 rounded-full" />
                 <span className="text-sm">@bin.familynew</span>
               </a>
             </div>

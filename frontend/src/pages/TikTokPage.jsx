@@ -134,8 +134,8 @@ const TikTokPage = () => {
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
-                                <Button className="bg-black hover:bg-gray-800 text-white font-bold px-8 py-6 text-lg rounded-full transition-all flex items-center space-x-2 w-64 justify-center">
-                                    <span className="text-xl">🎵</span>
+                                <Button className="bg-white hover:bg-gray-50 text-gray-900 border-2 border-gray-100 font-bold px-8 py-6 text-lg rounded-full transition-all flex items-center space-x-3 w-64 justify-center shadow-md hover:shadow-lg">
+                                    <img src="/icons/tiktok.png" alt="TikTok" className="w-8 h-8" />
                                     <span>@bunia_bin</span>
                                 </Button>
                             </a>
@@ -144,8 +144,8 @@ const TikTokPage = () => {
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
-                                <Button className="bg-[#FF0000] hover:bg-[#cc0000] text-white font-bold px-8 py-6 text-lg rounded-full transition-all flex items-center space-x-2 w-64 justify-center">
-                                    <Play className="h-6 w-6 fill-current" />
+                                <Button className="bg-white hover:bg-gray-50 text-gray-900 border-2 border-gray-100 font-bold px-8 py-6 text-lg rounded-full transition-all flex items-center space-x-3 w-64 justify-center shadow-md hover:shadow-lg">
+                                    <img src="/icons/youtube.png" alt="YouTube" className="w-8 h-8" />
                                     <span>BIN Bimbel</span>
                                 </Button>
                             </a>
@@ -154,8 +154,8 @@ const TikTokPage = () => {
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
-                                <Button className="bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045] hover:opacity-90 text-white font-bold px-8 py-6 text-lg rounded-full transition-all flex items-center space-x-2 w-64 justify-center">
-                                    <Smartphone className="h-6 w-6" />
+                                <Button className="bg-white hover:bg-gray-50 text-gray-900 border-2 border-gray-100 font-bold px-8 py-6 text-lg rounded-full transition-all flex items-center space-x-3 w-64 justify-center shadow-md hover:shadow-lg">
+                                    <img src="/icons/instagram.png" alt="Instagram" className="w-8 h-8" />
                                     <span>@bin.familynew</span>
                                 </Button>
                             </a>
