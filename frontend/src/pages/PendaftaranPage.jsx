@@ -114,7 +114,19 @@ const PendaftaranPage = () => {
           persetujuan: false, tanggal_daftar: new Date().toISOString().split('T')[0]
         });
       } else {
-        throw new Error(result.detail || "Gagal mengirim data pendaftaran.");
+        // Handle validation errors which might be arrays or objects
+        let errorMessage = "Gagal mengirim data pendaftaran.";
+        if (result.detail) {
+            if (Array.isArray(result.detail)) {
+                // If it's an array of errors (Pydantic style), join them
+                errorMessage = result.detail.map(err => `${err.loc.join('.')} - ${err.msg}`).join('\n');
+            } else if (typeof result.detail === 'object') {
+                errorMessage = JSON.stringify(result.detail);
+            } else {
+                errorMessage = result.detail;
+            }
+        }
+        throw new Error(errorMessage);
       }
 
     } catch (error) {

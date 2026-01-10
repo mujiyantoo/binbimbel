@@ -49,18 +49,18 @@ class RegistrationCreate(BaseModel):
     # Data Calon Siswa
     nama_lengkap: str = Field(..., min_length=3, max_length=100)
     nama_panggilan: Optional[str] = Field(None, max_length=50)
-    jenis_kelamin: str = Field(..., pattern="^(L|P)$")
-    tempat_lahir: str = Field(..., min_length=2, max_length=100)
-    tanggal_lahir: str
-    asal_sekolah: str = Field(..., min_length=3, max_length=150)
+    jenis_kelamin: Optional[str] = Field(None, pattern="^(L|P)$") # Optional
+    tempat_lahir: Optional[str] = Field(None, max_length=100) # Optional
+    tanggal_lahir: Optional[str] = None # Optional
+    asal_sekolah: Optional[str] = Field(None, max_length=150) # Optional
     kelas: str
-    alamat: str = Field(..., min_length=10, max_length=500)
+    alamat: Optional[str] = Field(None, max_length=500) # Optional
     telepon: str = Field(..., min_length=10, max_length=20)
     email: Optional[EmailStr] = None
     
     # Data Orang Tua/Wali
-    nama_ayah: str = Field(..., min_length=3, max_length=100)
-    telepon_ayah: str = Field(..., min_length=10, max_length=20)
+    nama_ayah: Optional[str] = Field(None, max_length=100) # Optional
+    telepon_ayah: Optional[str] = Field(None, max_length=20) # Optional
     alamat_ortu: Optional[str] = Field(None, max_length=500)
     
     # Pilihan Program Bimbel
@@ -70,7 +70,7 @@ class RegistrationCreate(BaseModel):
     waktu: str
     
     # Informasi Tambahan
-    referensi: str
+    referensi: Optional[str] = None # Optional
     persetujuan: bool
     tanggal_daftar: str
     
