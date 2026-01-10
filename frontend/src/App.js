@@ -25,7 +25,7 @@ function App() {
           <Route path="/galeri" element={<GaleriPage />} />
           <Route path="/kegiatan" element={<TikTokPage />} />
           <Route path="/kontak" element={<KontakPage />} />
-          <Route path="/pendaftaran" element={<Navigate to="/kontak" replace />} />
+          <Route path="/pendaftaran" element={<PendaftaranPage />} />
           <Route path="/admin" element={<AdminPage />} />
         </Routes>
         <Footer />

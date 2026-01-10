@@ -65,7 +65,7 @@ const Navbar = () => {
 
           {/* CTA Button */}
           <div className="hidden md:block">
-            <Link to="/kontak">
+            <Link to="/pendaftaran">
               <Button
                 className="bg-[#F89E3C] hover:bg-[#e68d2b] text-white font-semibold px-6 py-2 rounded-full transition-all hover:scale-105"
               >
@@ -105,7 +105,7 @@ const Navbar = () => {
                 </Link>
               ))}
               <div className="px-4 pt-2">
-                <Link to="/kontak" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link to="/pendaftaran" onClick={() => setIsMobileMenuOpen(false)}>
                   <Button className="w-full bg-[#F89E3C] hover:bg-[#e68d2b] text-white font-semibold py-2 rounded-full">
                     Daftar Sekarang
                   </Button>

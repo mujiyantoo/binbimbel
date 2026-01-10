@@ -44,7 +44,7 @@ const HomePage = () => {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
-              <Link to="/kontak">
+              <Link to="/pendaftaran">
                 <Button className="bg-[#5A9C9B] hover:bg-[#4a8584] text-white font-semibold px-8 py-6 text-lg rounded-full transition-all hover:scale-105 shadow-lg">
                   Daftar Sekarang
                   <ArrowRight className="ml-2 h-5 w-5" />
@@ -158,7 +158,7 @@ const HomePage = () => {
                     ))}
                   </ul>
 
-                  <Link to="/kontak" className="block">
+                  <Link to="/pendaftaran" className="block">
                     <Button className="w-full bg-[#F89E3C] hover:bg-[#e68d2b] text-white font-semibold rounded-full group-hover:scale-105 transition-all">
                       Daftar Program Ini
                     </Button>
@@ -203,7 +203,7 @@ const HomePage = () => {
                   </div>
                 </div>
                 <div className="flex-shrink-0">
-                  <Link to="/kontak">
+                  <Link to="/pendaftaran">
                     <Button className="bg-[#5A9C9B] hover:bg-[#4a8584] text-white font-bold px-10 py-6 text-lg rounded-full shadow-lg hover:scale-105 transition-all">
                       Daftar & Dapatkan Diskon!
                     </Button>
