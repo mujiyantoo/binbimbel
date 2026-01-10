@@ -135,17 +135,44 @@ async def get_all_registrations(
 @router.get("/stats/summary")
 async def get_registration_stats(db: AsyncSession = Depends(get_db)):
     """
-    Endpoint untuk mendapatkan statistik pendaftaran.
-    HARDCODED SAFETY MODE: Mengembalikan 0 agar dashboard tidak error 500.
+    Endpoint untuk mendapatkan statistik pendaftaran
     """
-    return {
-        "success": True,
-        "data": {
-            "total_registrations": 0,
-            "by_program": {"reguler": 0},
-            "by_level": {"SMA": 0}
+    try:
+        # Total registrations
+        total_stmt = select(func.count(RegistrationModel.id))
+        total_result = await db.execute(total_stmt)
+        total = total_result.scalar() or 0
+        
+        # Count by program
+        program_stmt = select(RegistrationModel.program, func.count(RegistrationModel.id)).group_by(RegistrationModel.program)
+        program_result = await db.execute(program_stmt)
+        program_stats = {row[0]: row[1] for row in program_result.all() if row[0]}
+        
+        # Count by level (extract first 2 chars of kelas)
+        level_stmt = select(func.substr(RegistrationModel.kelas, 1, 2), func.count(RegistrationModel.id)).group_by(func.substr(RegistrationModel.kelas, 1, 2))
+        level_result = await db.execute(level_stmt)
+        level_stats = {row[0]: row[1] for row in level_result.all() if row[0]}
+        
+        return {
+            "success": True,
+            "data": {
+                "total_registrations": total,
+                "by_program": program_stats,
+                "by_level": level_stats
+            }
         }
-    }
+        
+    except Exception as e:
+        logger.error(f"Error fetching stats: {str(e)}")
+        # Return empty stats on error instead of 500 to keep dashboard alive
+        return {
+            "success": True,
+            "data": {
+                "total_registrations": 0,
+                "by_program": {},
+                "by_level": {}
+            }
+        }
 
 
 @router.get("/{registration_id}", response_model=RegistrationResponse)

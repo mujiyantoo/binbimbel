@@ -21,35 +21,52 @@ const AdminPage = () => {
 
   const fetchData = async () => {
     setLoading(true);
+    setError(null);
     try {
-      const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || '';
-      console.log('Fetching registrations from:', `${BACKEND_URL}/api/registrations`);
+      // Use relative URL for Vercel (same domain)
+      const apiBase = process.env.REACT_APP_BACKEND_URL || '';
+      const registrationsUrl = apiBase ? `${apiBase}/api/registrations` : '/api/registrations';
+      const statsUrl = apiBase ? `${apiBase}/api/registrations/stats/summary` : '/api/registrations/stats/summary';
+      
+      console.log('Fetching registrations from:', registrationsUrl);
 
       // Fetch registrations
-      const regResponse = await fetch(`${BACKEND_URL}/api/registrations`);
+      const regResponse = await fetch(registrationsUrl);
       console.log('Reg Response Status:', regResponse.status);
 
       if (!regResponse.ok) {
-        throw new Error(`Failed to fetch: ${regResponse.status} ${regResponse.statusText}`);
+        const errorText = await regResponse.text();
+        console.error('API Error Response:', errorText);
+        throw new Error(`Failed to fetch: ${regResponse.status} ${regResponse.statusText}. ${errorText}`);
       }
 
       const regData = await regResponse.json();
       console.log('Reg Data:', regData);
-      if (regData.success) {
-        setRegistrations(regData.data);
+      
+      if (regData.success !== false) {
+        // Handle both success: true and success not being false
+        setRegistrations(regData.data || regData || []);
+      } else {
+        console.warn('API returned success: false', regData);
+        setRegistrations([]);
       }
 
       // Fetch stats
-      const statsResponse = await fetch(`${BACKEND_URL}/api/registrations/stats/summary`);
-      if (statsResponse.ok) {
-        const statsData = await statsResponse.json();
-        if (statsData.success) {
-          setStats(statsData.data);
+      try {
+        const statsResponse = await fetch(statsUrl);
+        if (statsResponse.ok) {
+          const statsData = await statsResponse.json();
+          if (statsData.success !== false) {
+            setStats(statsData.data || statsData);
+          }
         }
+      } catch (statsError) {
+        console.warn('Failed to fetch stats:', statsError);
+        // Don't set error for stats failure, it's not critical
       }
     } catch (error) {
       console.error('Error fetching data:', error);
-      setError(error.message);
+      setError(error.message || 'Gagal memuat data. Pastikan API endpoint tersedia dan database terhubung.');
       setRegistrations([]);
     } finally {
       setLoading(false);
@@ -287,7 +304,16 @@ const AdminPage = () => {
                 </div>
               ) : registrations.length === 0 ? (
                 <div className="text-center py-12">
-                  <p className="text-gray-600">Belum ada data pendaftaran</p>
+                  <p className="text-gray-600 mb-4">Belum ada data pendaftaran</p>
+                  <p className="text-sm text-gray-500">Data pendaftaran akan muncul di sini setelah ada yang mengisi form pendaftaran.</p>
+                  <Button 
+                    onClick={fetchData} 
+                    variant="outline" 
+                    className="mt-4 border-[#5A9C9B] text-[#5A9C9B] hover:bg-[#5A9C9B] hover:text-white"
+                  >
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                    Refresh
+                  </Button>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
