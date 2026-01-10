@@ -7,11 +7,10 @@ import { Textarea } from '../components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Checkbox } from '../components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '../components/ui/radio-group';
-import { useToast } from '../hooks/use-toast';
+import { toast } from 'sonner';
 import { CheckCircle, User, Users, GraduationCap, Info } from 'lucide-react';
 
 const PendaftaranPage = () => {
-  const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     // Data Siswa
@@ -28,11 +27,7 @@ const PendaftaranPage = () => {
 
     // Data Orang Tua
     nama_ayah: '',
-    pekerjaan_ayah: '',
     telepon_ayah: '',
-    nama_ibu: '',
-    pekerjaan_ibu: '',
-    telepon_ibu: '',
     alamat_ortu: '',
 
     // Program
@@ -84,10 +79,8 @@ const PendaftaranPage = () => {
 
     // Validasi mata pelajaran
     if (formData.mata_pelajaran.length === 0) {
-      toast({
-        title: "Mata Pelajaran Diperlukan",
-        description: "Mohon pilih minimal 1 mata pelajaran",
-        variant: "destructive"
+      toast.error("Mata Pelajaran Diperlukan", {
+        description: "Mohon pilih minimal 1 mata pelajaran"
       });
       return;
     }
@@ -108,8 +101,7 @@ const PendaftaranPage = () => {
       const result = await response.json();
 
       if (response.ok) {
-        toast({
-          title: "Pendaftaran Berhasil!",
+        toast.success("Pendaftaran Berhasil!", {
           description: "Data Anda telah kami terima dan akan segera diproses.",
         });
 
@@ -117,7 +109,7 @@ const PendaftaranPage = () => {
         setFormData({
           nama_lengkap: '', nama_panggilan: '', jenis_kelamin: '', tempat_lahir: '', tanggal_lahir: '',
           asal_sekolah: '', kelas: '', alamat: '', telepon: '', email: '',
-          nama_ayah: '', pekerjaan_ayah: '', telepon_ayah: '', nama_ibu: '', pekerjaan_ibu: '', telepon_ibu: '', alamat_ortu: '',
+          nama_ayah: '', telepon_ayah: '', alamat_ortu: '',
           program: '', mata_pelajaran: [], hari: '', waktu: '', referensi: '',
           persetujuan: false, tanggal_daftar: new Date().toISOString().split('T')[0]
         });
@@ -127,10 +119,8 @@ const PendaftaranPage = () => {
 
     } catch (error) {
       console.error('Error submitting form:', error);
-      toast({
-        title: "Pendaftaran Gagal",
+      toast.error("Pendaftaran Gagal", {
         description: error.message || "Mohon cek koneksi internet Anda atau hubungi admin.",
-        variant: "destructive"
       });
     } finally {
       setIsSubmitting(false);

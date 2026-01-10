@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi.responses import StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, desc
 from models.registration import (
@@ -11,6 +12,10 @@ from database import get_db
 from typing import List
 import logging
 from datetime import datetime
+from openpyxl import Workbook
+from openpyxl.styles import Font, Alignment, PatternFill
+from openpyxl.utils import get_column_letter
+import io
 
 logger = logging.getLogger(__name__)
 
@@ -205,4 +210,136 @@ async def get_registration_stats(db: AsyncSession = Depends(get_db)):
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Terjadi kesalahan saat mengambil statistik"
+        )
+
+
+@router.get("/export/excel")
+async def export_registrations_excel(db: AsyncSession = Depends(get_db)):
+    """
+    Endpoint untuk export data pendaftaran ke Excel
+    """
+    try:
+        # Fetch all registrations
+        stmt = select(RegistrationModel).order_by(desc(RegistrationModel.created_at))
+        result = await db.execute(stmt)
+        registrations = result.scalars().all()
+        
+        if not registrations:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Tidak ada data untuk diexport"
+            )
+        
+        # Create Excel workbook
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Data Pendaftaran"
+        
+        # Header style
+        header_fill = PatternFill(start_color="5A9C9B", end_color="5A9C9B", fill_type="solid")
+        header_font = Font(bold=True, color="FFFFFF", size=11)
+        header_alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+        
+        # Header row
+        headers = [
+            "No",
+            "Tanggal Daftar",
+            "Nama Lengkap",
+            "Nama Panggilan",
+            "Jenis Kelamin",
+            "Tempat Lahir",
+            "Tanggal Lahir",
+            "Asal Sekolah",
+            "Kelas",
+            "Alamat",
+            "Telepon",
+            "Email",
+            "Nama Ayah",
+            "Telepon Ayah",
+            "Alamat Orang Tua",
+            "Program",
+            "Mata Pelajaran",
+            "Hari",
+            "Waktu",
+            "Referensi"
+        ]
+        
+        for col_num, header in enumerate(headers, 1):
+            cell = ws.cell(row=1, column=col_num, value=header)
+            cell.fill = header_fill
+            cell.font = header_font
+            cell.alignment = header_alignment
+        
+        # Data rows
+        for row_num, reg in enumerate(registrations, 2):
+            # Format mata pelajaran
+            mata_pelajaran_str = ", ".join(reg.mata_pelajaran) if reg.mata_pelajaran else ""
+            
+            # Format tanggal
+            created_at_str = reg.created_at.strftime("%Y-%m-%d %H:%M:%S") if reg.created_at else ""
+            tanggal_daftar_str = reg.tanggal_daftar if reg.tanggal_daftar else ""
+            
+            # Jenis kelamin
+            jenis_kelamin_str = "Laki-laki" if reg.jenis_kelamin == "L" else "Perempuan" if reg.jenis_kelamin == "P" else ""
+            
+            row_data = [
+                row_num - 1,  # No
+                tanggal_daftar_str,
+                reg.nama_lengkap or "",
+                reg.nama_panggilan or "",
+                jenis_kelamin_str,
+                reg.tempat_lahir or "",
+                reg.tanggal_lahir or "",
+                reg.asal_sekolah or "",
+                reg.kelas.upper() if reg.kelas else "",
+                reg.alamat or "",
+                reg.telepon or "",
+                reg.email or "",
+                reg.nama_ayah or "",
+                reg.telepon_ayah or "",
+                reg.alamat_ortu or "",
+                reg.program or "",
+                mata_pelajaran_str,
+                reg.hari or "",
+                reg.waktu or "",
+                reg.referensi or ""
+            ]
+            
+            for col_num, value in enumerate(row_data, 1):
+                cell = ws.cell(row=row_num, column=col_num, value=value)
+                cell.alignment = Alignment(vertical="top", wrap_text=True)
+        
+        # Auto-adjust column widths
+        for col_num, header in enumerate(headers, 1):
+            max_length = len(header)
+            for row in ws.iter_rows(min_row=2, max_row=ws.max_row, min_col=col_num, max_col=col_num):
+                for cell in row:
+                    if cell.value:
+                        max_length = max(max_length, len(str(cell.value)))
+            ws.column_dimensions[get_column_letter(col_num)].width = min(max_length + 2, 50)
+        
+        # Freeze header row
+        ws.freeze_panes = "A2"
+        
+        # Save to BytesIO
+        excel_file = io.BytesIO()
+        wb.save(excel_file)
+        excel_file.seek(0)
+        
+        # Generate filename with current date
+        filename = f"Data_Pendaftaran_BIN_Bimbel_{datetime.now().strftime('%Y%m%d')}.xlsx"
+        
+        return StreamingResponse(
+            excel_file,
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={"Content-Disposition": f'attachment; filename="{filename}"'}
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error exporting Excel: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Terjadi kesalahan saat export Excel"
         )

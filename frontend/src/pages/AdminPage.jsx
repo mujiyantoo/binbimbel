@@ -402,28 +402,18 @@ const AdminPage = () => {
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <p className="text-gray-600">Nama Ayah</p>
-                    <p className="font-medium">{selectedRegistration.nama_ayah}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-600">Pekerjaan Ayah</p>
-                    <p className="font-medium">{selectedRegistration.pekerjaan_ayah || '-'}</p>
+                    <p className="font-medium">{selectedRegistration.nama_ayah || '-'}</p>
                   </div>
                   <div>
                     <p className="text-gray-600">Telepon Ayah</p>
-                    <p className="font-medium">{selectedRegistration.telepon_ayah}</p>
+                    <p className="font-medium">{selectedRegistration.telepon_ayah || '-'}</p>
                   </div>
-                  <div>
-                    <p className="text-gray-600">Nama Ibu</p>
-                    <p className="font-medium">{selectedRegistration.nama_ibu}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-600">Pekerjaan Ibu</p>
-                    <p className="font-medium">{selectedRegistration.pekerjaan_ibu || '-'}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-600">Telepon Ibu</p>
-                    <p className="font-medium">{selectedRegistration.telepon_ibu}</p>
-                  </div>
+                  {selectedRegistration.alamat_ortu && (
+                    <div className="col-span-2">
+                      <p className="text-gray-600">Alamat Orang Tua</p>
+                      <p className="font-medium">{selectedRegistration.alamat_ortu}</p>
+                    </div>
+                  )}
                 </div>
               </div>
 

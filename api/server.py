@@ -52,7 +52,7 @@ app = FastAPI(
 # Health check root for direct function testing
 @app.get("/")
 async def root_health():
-    return {"status": "ok", "engine": "FastAPI on Netlify"}
+    return {"status": "ok", "engine": "FastAPI on Vercel"}
 
 api_router = APIRouter(prefix="/api")
 
