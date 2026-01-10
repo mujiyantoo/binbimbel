@@ -1,47 +1,69 @@
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
-from sqlalchemy.orm import DeclarativeBase, sessionmaker
-from sqlalchemy import Column, String, DateTime, JSON, Boolean
+from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.pool import NullPool
 import os
+import logging
 from dotenv import load_dotenv
-from datetime import datetime, timezone
 from pathlib import Path
 
+# --- Configuration ---
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
-# Use local SQLite database for development
-import logging
 logger = logging.getLogger(__name__)
 
-# Check if DATABASE_URL is set for production (Vercel/Netlify)
-DATABASE_URL = os.environ.get("DATABASE_URL") or os.environ.get("NETLIFY_DATABASE_URL")
+# --- Database URL Handling ---
+# Check for Supabase, standard DATABASE_URL, or Netlify's auto-generated NETLIFY_DATABASE_URL
+DATABASE_URL = (
+    os.environ.get("SUPABASE_DB_URL") or 
+    os.environ.get("DATABASE_URL") or 
+    os.environ.get("NETLIFY_DATABASE_URL")
+)
 
 if DATABASE_URL:
-    # Production: Use Postgres/Neon with asyncpg
+    # AsyncPG requires postgresql+asyncpg:// scheme
     if DATABASE_URL.startswith("postgres://"):
         DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+asyncpg://", 1)
     elif DATABASE_URL.startswith("postgresql://"):
         DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
-    logger.info(f"Using remote DATABASE_URL: {DATABASE_URL[:30]}...")
-    # Disable prepared statements for Supabase Transaction Pooler (port 6543)
-    connect_args = {"statement_cache_size": 0}
-else:
-    # Local development: Use SQLite
+
+# --- Engine Creation ---
+if not DATABASE_URL:
+    logger.warning("DATABASE_URL not found! Using local fallback.")
     DATABASE_URL = "sqlite+aiosqlite:///./bimbel.db"
     logger.info("Using local SQLite database: bimbel.db")
     connect_args = {}
+    engine = create_async_engine(DATABASE_URL, echo=True, connect_args=connect_args)
+else:
+    logger.info(f"DATABASE_URL found: {DATABASE_URL[:30]}...")
 
-engine = create_async_engine(DATABASE_URL, echo=True, connect_args=connect_args)
+    # Konfigurasi khusus untuk Supabase/Postgres dengan AsyncPG
+    # Penting: Supabase Transaction Pooler (port 6543) tidak support prepared statements
+    # dan environment Serverless (Vercel) sebaiknya menonaktifkan pooling client-side (NullPool)
+    connect_args = {"statement_cache_size": 0}
+    
+    logger.info(f"Initializing DB with connect_args: {connect_args} and NullPool")
+    
+    engine = create_async_engine(
+        DATABASE_URL, 
+        echo=True,
+        connect_args=connect_args,
+        poolclass=NullPool
+    )
+
+# --- Session Factory ---
 AsyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
+# --- Base Model ---
 class Base(DeclarativeBase):
     pass
 
-import logging
-logger = logging.getLogger(__name__)
-
-# Flag to prevent multiple initializations
+# --- Lazy Initialization Logic ---
 _db_initialized = False
+
+async def init_db():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
 
 async def ensure_db():
     global _db_initialized
@@ -66,7 +88,3 @@ async def get_db():
     
     async with AsyncSessionLocal() as session:
         yield session
-
-async def init_db():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)

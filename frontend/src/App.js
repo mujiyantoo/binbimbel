@@ -1,6 +1,6 @@
 import React from "react";
 import "./App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import HomePage from "./pages/HomePage";
@@ -9,6 +9,7 @@ import TentangPage from "./pages/TentangPage";
 import GaleriPage from "./pages/GaleriPage";
 import KontakPage from "./pages/KontakPage";
 import PendaftaranPage from "./pages/PendaftaranPage";
+import TikTokPage from "./pages/TikTokPage";
 import AdminPage from "./pages/AdminPage";
 import { Toaster } from "./components/ui/sonner";
 
@@ -22,8 +23,9 @@ function App() {
           <Route path="/program" element={<ProgramPage />} />
           <Route path="/tentang" element={<TentangPage />} />
           <Route path="/galeri" element={<GaleriPage />} />
+          <Route path="/kegiatan" element={<TikTokPage />} />
           <Route path="/kontak" element={<KontakPage />} />
-          <Route path="/pendaftaran" element={<PendaftaranPage />} />
+          <Route path="/pendaftaran" element={<Navigate to="/kontak" replace />} />
           <Route path="/admin" element={<AdminPage />} />
         </Routes>
         <Footer />

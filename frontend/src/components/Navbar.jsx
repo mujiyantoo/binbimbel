@@ -21,6 +21,7 @@ const Navbar = () => {
     { name: 'Program', path: '/program' },
     { name: 'Tentang Kami', path: '/tentang' },
     { name: 'Galeri', path: '/galeri' },
+    { name: 'Medsos', path: '/kegiatan' },
     { name: 'Kontak', path: '/kontak' }
   ];
 
@@ -28,11 +29,10 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? 'bg-white/95 backdrop-blur-md shadow-md'
-          : 'bg-transparent'
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
+        ? 'bg-white/95 backdrop-blur-md shadow-md'
+        : 'bg-transparent'
+        }`}
     >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
@@ -51,13 +51,12 @@ const Navbar = () => {
               <Link
                 key={link.path}
                 to={link.path}
-                className={`text-sm font-medium transition-colors hover:text-[#5A9C9B] ${
-                  isActive(link.path)
-                    ? 'text-[#5A9C9B] font-semibold'
-                    : isScrolled
+                className={`text-sm font-medium transition-colors hover:text-[#5A9C9B] ${isActive(link.path)
+                  ? 'text-[#5A9C9B] font-semibold'
+                  : isScrolled
                     ? 'text-gray-700'
                     : 'text-gray-800'
-                }`}
+                  }`}
               >
                 {link.name}
               </Link>
@@ -66,7 +65,7 @@ const Navbar = () => {
 
           {/* CTA Button */}
           <div className="hidden md:block">
-            <Link to="/pendaftaran">
+            <Link to="/kontak">
               <Button
                 className="bg-[#F89E3C] hover:bg-[#e68d2b] text-white font-semibold px-6 py-2 rounded-full transition-all hover:scale-105"
               >
@@ -97,17 +96,16 @@ const Navbar = () => {
                   key={link.path}
                   to={link.path}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className={`px-4 py-2 text-sm font-medium transition-colors hover:bg-gray-50 ${
-                    isActive(link.path)
-                      ? 'text-[#5A9C9B] bg-teal-50 font-semibold'
-                      : 'text-gray-700'
-                  }`}
+                  className={`px-4 py-2 text-sm font-medium transition-colors hover:bg-gray-50 ${isActive(link.path)
+                    ? 'text-[#5A9C9B] bg-teal-50 font-semibold'
+                    : 'text-gray-700'
+                    }`}
                 >
                   {link.name}
                 </Link>
               ))}
               <div className="px-4 pt-2">
-                <Link to="/pendaftaran" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link to="/kontak" onClick={() => setIsMobileMenuOpen(false)}>
                   <Button className="w-full bg-[#F89E3C] hover:bg-[#e68d2b] text-white font-semibold py-2 rounded-full">
                     Daftar Sekarang
                   </Button>
